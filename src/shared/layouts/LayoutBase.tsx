@@ -4,10 +4,11 @@ import { useDrawerContext } from '../contexts';
 
 interface ILayoutBaseProps {
   title: string;
+  barraDeFerramentas: React.ReactNode;
   children: React.ReactNode;
 }
 
-export const LayoutBase: React.FC<ILayoutBaseProps> = ({ title, children }) => {
+export const LayoutBase: React.FC<ILayoutBaseProps> = ({ title, barraDeFerramentas, children }) => {
   const theme = useTheme();
   const smDown = useMediaQuery(theme.breakpoints.down('sm'));
   const { toggleDrawerOpen } = useDrawerContext();
@@ -26,7 +27,7 @@ export const LayoutBase: React.FC<ILayoutBaseProps> = ({ title, children }) => {
       </Box>
       
       <Box>
-        Barra de ferramentas
+        { barraDeFerramentas }
       </Box>
 
       <Box>
