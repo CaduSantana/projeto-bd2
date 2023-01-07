@@ -4,11 +4,10 @@ import { useDrawerContext } from '../contexts';
 
 interface ILayoutBaseProps {
   title: string;
-  barraDeFerramentas: React.ReactNode;
   children: React.ReactNode;
 }
 
-export const LayoutBase: React.FC<ILayoutBaseProps> = ({ title, barraDeFerramentas, children }) => {
+export const LayoutBase: React.FC<ILayoutBaseProps> = ({ title, children }) => {
   const theme = useTheme();
   const smDown = useMediaQuery(theme.breakpoints.down('sm'));
   const { toggleDrawerOpen } = useDrawerContext();
@@ -17,21 +16,17 @@ export const LayoutBase: React.FC<ILayoutBaseProps> = ({ title, barraDeFerrament
     <Box height="100%" display="flex" flexDirection="column" gap={1}>
       <Box padding={1} height={theme.spacing(12)} display="flex" alignItems="center" gap={1}>
         {smDown ?
-        (<IconButton onClick={ toggleDrawerOpen }>
-          <Icon>menu</Icon>
-        </IconButton>) : undefined}
+          (<IconButton onClick={toggleDrawerOpen}>
+            <Icon>menu</Icon>
+          </IconButton>) : undefined}
 
         <Typography variant='h5'>
-          { title }
+          {title}
         </Typography>
-      </Box>
-      
-      <Box>
-        { barraDeFerramentas }
       </Box>
 
       <Box>
-        { children }
+        {children}
       </Box>
     </Box>
   );
