@@ -1,5 +1,5 @@
 export interface ICategoriaProduto {
-  id: string,
+  id: number,
   nome: string,
   prioridade: number,
 }
@@ -8,6 +8,6 @@ export interface IProduto {
   uuid: string,
   nome: string,
   descricao: string,
-  massa: number,
+  massa?: number,
   categoria: ICategoriaProduto,
 }
