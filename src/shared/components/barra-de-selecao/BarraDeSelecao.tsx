@@ -1,12 +1,9 @@
 import { Autocomplete, Button, Icon, Paper, TextField, useTheme } from '@mui/material';
 import { Box } from '@mui/system';
+import { AutoCompleteComboBox, IAutoCompleteComboBoxProps } from '../autocomplete-combobox/AutoCompleteComboBox';
 
 interface IBarraDeSelecaoProps {
-  textoDaBusca?: string;
-  aoMudarTextoDeBusca?: (novoTexto: string) => void;
-  opcoesDeBusca?: { key: string, label: string }[];
-  opcaoSelecionada?: { key: string, label: string };
-  aoMudarSelecao?: (novaSelecaoKey: string) => void;
+  autoCompleteProps: IAutoCompleteComboBoxProps;
   textoBotaoSelecionar?: string;
   mostrarBotaoSelecionar?: boolean;
   aoClicarEmSelecionar?: () => void;
@@ -16,11 +13,7 @@ interface IBarraDeSelecaoProps {
 }
 
 export const BarraDeSelecao: React.FC<IBarraDeSelecaoProps> = ({
-  textoDaBusca = '',
-  aoMudarTextoDeBusca,
-  opcoesDeBusca = [],
-  opcaoSelecionada,
-  aoMudarSelecao,
+  autoCompleteProps,
   textoBotaoSelecionar = 'Selecionar',
   mostrarBotaoSelecionar = true,
   aoClicarEmSelecionar,
@@ -36,17 +29,7 @@ export const BarraDeSelecao: React.FC<IBarraDeSelecaoProps> = ({
       display='flex' gap={1} alignItems='center'
       component={Paper}>
       <Box flex={1}>
-        <Autocomplete size="small" placeholder='Pesquisar...'
-          renderInput={(params) => (
-            <TextField {...params} />
-          )}
-          inputValue={textoDaBusca}
-          onInputChange={(_, novoTexto) => aoMudarTextoDeBusca?.(novoTexto)}
-          options={opcoesDeBusca}
-          value={opcaoSelecionada}
-          onChange={(_, novaSelecao) => aoMudarSelecao?.(novaSelecao?.key as string)}
-          fullWidth
-          noOptionsText='Não há opções disponíveis' />
+        <AutoCompleteComboBox {...autoCompleteProps} />
       </Box>
 
       <Box display='flex' justifyContent='end' gap={2}>
