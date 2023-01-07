@@ -1,1 +1,1 @@
-export {};
+export * from './produtos/ProdutosService';
