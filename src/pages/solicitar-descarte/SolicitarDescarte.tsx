@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { BarraDeSelecao } from '../../shared/components';
 import { LayoutBase } from '../../shared/layouts';
 import { TabelaProdutos, ModalFormNovoProduto } from './components';
@@ -21,14 +21,14 @@ export const SolicitarDescarte: React.FC = () => {
     },
   ];
 
+  const produtosAdicionados = useRef<{ uuid: string; quantidade: number }[]>([]);
   const [textoDeBusca, setTextoDeBusca] = useState<string>('');
   const [opcaoSelecionada, setOpcaoSelecionada] = useState<{
     key: string;
     label: string;
   }>();
 
-  const [produtosAdicionados, setProdutosAdicionados] = useState<string[][]>([]);
-
+  const [linhasTabela, setLinhasTabela] = useState<string[][]>([]);
   const [modalNovoProdutoAberto, setModalNovoProdutoAberto] = useState<boolean>(false);
 
   const aoMudarSelecao = (novaSelecaoKey: string) => {
@@ -40,9 +40,11 @@ export const SolicitarDescarte: React.FC = () => {
 
   const aoMudarQuantidade = (linhaIndex: number, novaQuantidade: number) => {
     if (novaQuantidade > 0) {
-      const novaListaDeProdutos = [...produtosAdicionados];
+      produtosAdicionados.current[linhaIndex].quantidade = novaQuantidade;
+      console.log(produtosAdicionados);
+      const novaListaDeProdutos = [...linhasTabela];
       novaListaDeProdutos[linhaIndex][4] = novaQuantidade.toString();
-      setProdutosAdicionados(novaListaDeProdutos);
+      setLinhasTabela(novaListaDeProdutos);
     }
   };
 
@@ -57,22 +59,30 @@ export const SolicitarDescarte: React.FC = () => {
     }
 
     // Procura se o produto já foi adicionado, valor é diferente de -1 se for encontrado
-    const linhaProduto = produtosAdicionados.findIndex((linha) => linha[0] === produtoSelecionado.uuid);
-    if (linhaProduto !== -1) {
-      // Se o produto já foi adicionado, incrementa a quantidade
-      const novaListaDeProdutos = [...produtosAdicionados];
-      novaListaDeProdutos[linhaProduto][4] = (parseInt(novaListaDeProdutos[linhaProduto][4]) + 1).toString();
-      setProdutosAdicionados(novaListaDeProdutos);
+    const indexProdutoAdicionado = produtosAdicionados.current.findIndex(
+      (produto) => produto.uuid === produtoSelecionado.uuid
+    );
+    if (indexProdutoAdicionado !== -1) {
+      // Se o produto já foi adicionado, incrementa a quantidade e atualiza linhas da tabela
+      produtosAdicionados.current[indexProdutoAdicionado].quantidade += 1;
+      const novaLinhasTabela = [...linhasTabela];
+      novaLinhasTabela[indexProdutoAdicionado][4] = (
+        parseInt(novaLinhasTabela[indexProdutoAdicionado][4]) + 1
+      ).toString();
+      setLinhasTabela(novaLinhasTabela);
+      console.log(produtosAdicionados);
       return;
     }
 
     // Se o produto não foi adicionado, adiciona na lista
-    setProdutosAdicionados([
-      ...produtosAdicionados,
+    produtosAdicionados.current.push({ uuid: produtoSelecionado.uuid, quantidade: 1 });
+    console.log(produtosAdicionados);
+    setLinhasTabela([
+      ...linhasTabela,
       [
-        produtoSelecionado.uuid,
         produtoSelecionado.nome,
         produtoSelecionado.descricao,
+        produtoSelecionado.massa.toString(),
         produtoSelecionado.categoria,
         '1',
       ],
@@ -80,9 +90,11 @@ export const SolicitarDescarte: React.FC = () => {
   };
 
   const aoClicarEmDeletar = (linhaIndex: number) => {
-    const novaListaDeProdutos = [...produtosAdicionados];
+    produtosAdicionados.current.splice(linhaIndex, 1);
+    console.log(produtosAdicionados);
+    const novaListaDeProdutos = [...linhasTabela];
     novaListaDeProdutos.splice(linhaIndex, 1);
-    setProdutosAdicionados(novaListaDeProdutos);
+    setLinhasTabela(novaListaDeProdutos);
   };
 
   return (
@@ -103,7 +115,7 @@ export const SolicitarDescarte: React.FC = () => {
       />
 
       <TabelaProdutos
-        conteudo={produtosAdicionados}
+        conteudo={linhasTabela}
         aoMudarQuantidade={aoMudarQuantidade}
         aoClicarDeletar={aoClicarEmDeletar}
       />
