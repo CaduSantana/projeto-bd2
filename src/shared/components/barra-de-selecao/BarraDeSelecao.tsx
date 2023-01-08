@@ -25,7 +25,7 @@ export const BarraDeSelecao: React.FC<IBarraDeSelecaoProps> = ({
 
   return (
     <Box height={theme.spacing(5)}
-      marginX={1} padding={1} paddingX={2}
+      padding={1} paddingX={2}
       display='flex' gap={1} alignItems='center'
       component={Paper}>
       <Box flex={1}>
