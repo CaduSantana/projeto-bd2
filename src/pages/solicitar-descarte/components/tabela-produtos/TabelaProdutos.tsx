@@ -11,15 +11,28 @@ import {
   TextField,
   useTheme,
 } from '@mui/material';
+import { useSolicitarDescarteContext } from '../../SolicitarDescarteContext';
 
-interface ITabelaProdutosProps {
-  conteudo: string[][];
-  aoMudarQuantidade?: (linhaIndex: number, novaQuantidade: number) => void;
-  aoClicarDeletar?: (linhaIndex: number) => void;
-}
-
-export const TabelaProdutos: React.FC<ITabelaProdutosProps> = ({ conteudo, aoMudarQuantidade, aoClicarDeletar }) => {
+export const TabelaProdutos: React.FC = () => {
   const theme = useTheme();
+  const { produtosAdicionados } = useSolicitarDescarteContext();
+
+  const listaDeProdutos = [
+    {
+      uuid: '1',
+      nome: 'Produto 1',
+      descricao: 'Descrição 1',
+      massa: 100,
+      categoria: 'Categoria 1',
+    },
+    {
+      uuid: '2',
+      nome: 'Produto 2',
+      descricao: 'Descrição 2',
+      massa: 200,
+      categoria: 'Categoria 2',
+    },
+  ];
 
   const cabecalho = ['Nome', 'Descrição', 'Massa aproximada (g)', 'Categoria', 'Quantidade', 'Deletar'];
   const alinhamentos: ('left' | 'right' | 'center' | 'justify' | 'inherit' | undefined)[] = [
@@ -30,6 +43,20 @@ export const TabelaProdutos: React.FC<ITabelaProdutosProps> = ({ conteudo, aoMud
     'right',
     'center',
   ];
+
+  const mapProdutosAdicionadosToLinhas: () => string[][] = () => {
+    return produtosAdicionados.value.map((produtoAdicionado) => {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const produto = listaDeProdutos.find((produto) => produto.uuid === produtoAdicionado.uuid)!;
+      return [
+        produto.nome,
+        produto.descricao,
+        produto.massa.toString(),
+        produto.categoria,
+        produtoAdicionado.quantidade.toString(),
+      ];
+    });
+  };
 
   return (
     <TableContainer component={Paper}>
@@ -44,7 +71,7 @@ export const TabelaProdutos: React.FC<ITabelaProdutosProps> = ({ conteudo, aoMud
           </TableRow>
         </TableHead>
         <TableBody>
-          {conteudo.map((linha, linhaIndex) => (
+          {mapProdutosAdicionadosToLinhas().map((linha, linhaIndex) => (
             <TableRow key={linhaIndex}>
               {linha.map((celula, colunaIndex) => (
                 <TableCell key={colunaIndex} align={alinhamentos[colunaIndex]}>
@@ -52,7 +79,14 @@ export const TabelaProdutos: React.FC<ITabelaProdutosProps> = ({ conteudo, aoMud
                     <TextField
                       size="small"
                       value={celula}
-                      onChange={(event) => aoMudarQuantidade?.(linhaIndex, parseInt(event.target.value))}
+                      onChange={(event) => {
+                        const novaQuantidade = parseInt(event.target.value);
+                        if (novaQuantidade > 0) {
+                          const novoProdutosAdicionados = [...produtosAdicionados.value];
+                          novoProdutosAdicionados[linhaIndex].quantidade = novaQuantidade;
+                          produtosAdicionados.setValue(novoProdutosAdicionados);
+                        }
+                      }}
                       sx={{
                         width: theme.spacing(10),
                       }}
@@ -63,7 +97,11 @@ export const TabelaProdutos: React.FC<ITabelaProdutosProps> = ({ conteudo, aoMud
                 </TableCell>
               ))}
               <TableCell align={alinhamentos[5]}>
-                <IconButton onClick={() => aoClicarDeletar?.(linhaIndex)}>
+                <IconButton onClick={() => {
+                  const novoProdutosAdicionados = [...produtosAdicionados.value];
+                  novoProdutosAdicionados.splice(linhaIndex, 1);
+                  produtosAdicionados.setValue(novoProdutosAdicionados);
+                }}>
                   <Icon>delete</Icon>
                 </IconButton>
               </TableCell>

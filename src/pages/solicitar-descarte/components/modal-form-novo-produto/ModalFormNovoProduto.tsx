@@ -2,14 +2,12 @@ import { Box, Button, Modal, Paper, TextField, useTheme } from '@mui/material';
 import { useState } from 'react';
 import { AutoCompleteComboBox } from '../../../../shared/components';
 import { ICategoriaProduto } from '../../../../shared/services/api';
+import { useSolicitarDescarteContext } from '../../SolicitarDescarteContext';
 
-interface IModalFormNovoProdutoProps {
-  aberto: boolean;
-  aoFechar: () => void;
-}
-
-export const ModalFormNovoProduto: React.FC<IModalFormNovoProdutoProps> = ({ aberto, aoFechar }) => {
+export const ModalFormNovoProduto: React.FC = () => {
   const theme = useTheme();
+
+  const { modalNovoProdutoAberto } = useSolicitarDescarteContext();
 
   const listaDeCategorias: ICategoriaProduto[] = [
     { id: 1, nome: 'Categoria 1', prioridade: 1 },
@@ -33,8 +31,8 @@ export const ModalFormNovoProduto: React.FC<IModalFormNovoProdutoProps> = ({ abe
 
   return (
     <Modal
-      open={aberto}
-      onClose={aoFechar}
+      open={modalNovoProdutoAberto.value}
+      onClose={() => modalNovoProdutoAberto.setValue(false)}
       component={Box}
       boxSizing="border-box"
       sx={{
