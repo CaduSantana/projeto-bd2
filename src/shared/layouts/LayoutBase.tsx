@@ -25,7 +25,9 @@ export const LayoutBase: React.FC<ILayoutBaseProps> = ({ title, children }) => {
         </Typography>
       </Box>
 
-      <Box>
+      <Box
+      display='flex' flexDirection='column' gap={1}
+      marginX={2}>
         {children}
       </Box>
     </Box>

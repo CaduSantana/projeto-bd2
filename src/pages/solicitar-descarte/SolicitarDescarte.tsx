@@ -1,107 +1,126 @@
-import { Button, Modal, Paper, TextField, useTheme } from '@mui/material';
-import { Box } from '@mui/system';
-import { useState } from 'react';
-import { AutoCompleteComboBox, BarraDeSelecao } from '../../shared/components';
+import { useRef, useState } from 'react';
+import { BarraDeSelecao } from '../../shared/components';
 import { LayoutBase } from '../../shared/layouts';
-import { ICategoriaProduto } from '../../shared/services/api';
-
-interface IFormNovoProdutoProps {
-  aberto: boolean;
-  aoFechar: () => void;
-}
-
-const FormNovoProduto: React.FC<IFormNovoProdutoProps> = ({ aberto, aoFechar }) => {
-  const theme = useTheme();
-
-  const listaDeCategorias: ICategoriaProduto[] = [
-    { id: 1, nome: 'Categoria 1', prioridade: 1 },
-    { id: 2, nome: 'Categoria 2', prioridade: 2 },
-  ];
-
-  const [textoCategoria, setTextoCategoria] = useState<string>('');
-  const [categoriaSelecionada, setCategoriaSelecionada] = useState<{ key: string, label: string }>();
-
-  const handleMudarSelecao = (novaSelecaoKey: string) => {
-    const novaCategoriaSelecionada = listaDeCategorias.find((categoria) => categoria.id.toString() === novaSelecaoKey);
-    novaCategoriaSelecionada && setCategoriaSelecionada({ key: novaCategoriaSelecionada.id.toString(), label: novaCategoriaSelecionada.nome });
-  };
-
-  return (
-    <Modal
-      open={aberto}
-      onClose={aoFechar}
-      component={Box}
-      boxSizing='border-box'
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100vh',
-        width: '100vw'
-      }}
-    >
-      <Box component={Paper} padding={theme.spacing(2)}>
-        <Box
-          display='flex' flexDirection='column' gap={2}
-          component='form'>
-          <Box display='flex' flexDirection='row' gap={2}>
-            <TextField size='small' placeholder='Nome' />
-            <TextField size='small' placeholder='Descrição' />
-            <TextField size='small' placeholder='Massa aproximada (g)' />
-          </Box>
-          <Box display='flex' flexDirection='row' gap={2}>
-            <Box flex={1}>
-              <AutoCompleteComboBox
-                textoDaBusca={textoCategoria}
-                aoMudarTextoDeBusca={setTextoCategoria}
-                opcoesDeBusca={listaDeCategorias.map((categoria) => ({ key: categoria.id.toString(), label: categoria.nome }))}
-                opcaoSelecionada={categoriaSelecionada}
-                aoMudarSelecao={handleMudarSelecao}
-              />
-            </Box>
-
-            <Button size='small' variant='contained'>Adicionar produto</Button>
-          </Box>
-        </Box>
-      </Box>
-    </Modal>
-  );
-};
+import { TabelaProdutos, ModalFormNovoProduto } from './components';
 
 export const SolicitarDescarte: React.FC = () => {
-  const listaDeOpcoes = [
-    { key: '1', label: 'Opção 1' },
-    { key: '2', label: 'Opção 2' },
-    { key: '3', label: 'Opção 3' },
-    { key: '4', label: 'Opção 4' },
+  const listaDeProdutos = [
+    {
+      uuid: '1',
+      nome: 'Produto 1',
+      descricao: 'Descrição 1',
+      massa: 100,
+      categoria: 'Categoria 1',
+    },
+    {
+      uuid: '2',
+      nome: 'Produto 2',
+      descricao: 'Descrição 2',
+      massa: 200,
+      categoria: 'Categoria 2',
+    },
   ];
 
+  const produtosAdicionados = useRef<{ uuid: string; quantidade: number }[]>([]);
   const [textoDeBusca, setTextoDeBusca] = useState<string>('');
-  const [opcaoSelecionada, setOpcaoSelecionada] = useState<{ key: string, label: string }>();
+  const [opcaoSelecionada, setOpcaoSelecionada] = useState<{
+    key: string;
+    label: string;
+  }>();
+
+  const [linhasTabela, setLinhasTabela] = useState<string[][]>([]);
   const [modalNovoProdutoAberto, setModalNovoProdutoAberto] = useState<boolean>(false);
 
   const aoMudarSelecao = (novaSelecaoKey: string) => {
-    setOpcaoSelecionada(listaDeOpcoes.find((opcao) => opcao.key === novaSelecaoKey) as { key: string, label: string });
+    const produtoSelecionado = listaDeProdutos.find((produto) => produto.uuid === novaSelecaoKey);
+    if (produtoSelecionado) {
+      setOpcaoSelecionada({ key: produtoSelecionado.uuid, label: produtoSelecionado.nome });
+    }
+  };
+
+  const aoMudarQuantidade = (linhaIndex: number, novaQuantidade: number) => {
+    if (novaQuantidade > 0) {
+      produtosAdicionados.current[linhaIndex].quantidade = novaQuantidade;
+      console.log(produtosAdicionados);
+      const novaListaDeProdutos = [...linhasTabela];
+      novaListaDeProdutos[linhaIndex][4] = novaQuantidade.toString();
+      setLinhasTabela(novaListaDeProdutos);
+    }
+  };
+
+  const aoClicarEmSelecionar = () => {
+    if (!opcaoSelecionada) {
+      return;
+    }
+
+    const produtoSelecionado = listaDeProdutos.find((produto) => produto.uuid === opcaoSelecionada.key);
+    if (!produtoSelecionado) {
+      return;
+    }
+
+    // Procura se o produto já foi adicionado, valor é diferente de -1 se for encontrado
+    const indexProdutoAdicionado = produtosAdicionados.current.findIndex(
+      (produto) => produto.uuid === produtoSelecionado.uuid
+    );
+    if (indexProdutoAdicionado !== -1) {
+      // Se o produto já foi adicionado, incrementa a quantidade e atualiza linhas da tabela
+      produtosAdicionados.current[indexProdutoAdicionado].quantidade += 1;
+      const novaLinhasTabela = [...linhasTabela];
+      novaLinhasTabela[indexProdutoAdicionado][4] = (
+        parseInt(novaLinhasTabela[indexProdutoAdicionado][4]) + 1
+      ).toString();
+      setLinhasTabela(novaLinhasTabela);
+      console.log(produtosAdicionados);
+      return;
+    }
+
+    // Se o produto não foi adicionado, adiciona na lista
+    produtosAdicionados.current.push({ uuid: produtoSelecionado.uuid, quantidade: 1 });
+    console.log(produtosAdicionados);
+    setLinhasTabela([
+      ...linhasTabela,
+      [
+        produtoSelecionado.nome,
+        produtoSelecionado.descricao,
+        produtoSelecionado.massa.toString(),
+        produtoSelecionado.categoria,
+        '1',
+      ],
+    ]);
+  };
+
+  const aoClicarEmDeletar = (linhaIndex: number) => {
+    produtosAdicionados.current.splice(linhaIndex, 1);
+    console.log(produtosAdicionados);
+    const novaListaDeProdutos = [...linhasTabela];
+    novaListaDeProdutos.splice(linhaIndex, 1);
+    setLinhasTabela(novaListaDeProdutos);
   };
 
   return (
-    <LayoutBase
-      title='Solicitar um descarte'>
+    <LayoutBase title="Solicitar um descarte">
       <BarraDeSelecao
         autoCompleteProps={{
           textoDaBusca: textoDeBusca,
           aoMudarTextoDeBusca: setTextoDeBusca,
-          opcoesDeBusca: listaDeOpcoes,
+          opcoesDeBusca: listaDeProdutos.map((produto) => ({
+            key: produto.uuid,
+            label: produto.nome,
+          })),
           opcaoSelecionada: opcaoSelecionada,
           aoMudarSelecao: aoMudarSelecao,
         }}
         aoClicarEmNovo={() => setModalNovoProdutoAberto(true)}
+        aoClicarEmSelecionar={aoClicarEmSelecionar}
       />
 
-      <FormNovoProduto
-        aberto={modalNovoProdutoAberto}
-        aoFechar={() => setModalNovoProdutoAberto(false)}
+      <TabelaProdutos
+        conteudo={linhasTabela}
+        aoMudarQuantidade={aoMudarQuantidade}
+        aoClicarDeletar={aoClicarEmDeletar}
       />
+
+      <ModalFormNovoProduto aberto={modalNovoProdutoAberto} aoFechar={() => setModalNovoProdutoAberto(false)} />
     </LayoutBase>
   );
 };
