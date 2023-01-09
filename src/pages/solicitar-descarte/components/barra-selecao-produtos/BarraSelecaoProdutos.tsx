@@ -34,7 +34,7 @@ export const BarraSelecaoProdutos: React.FC = () => {
     descricao: string;
     massa: number;
     categoria: string;
-  }>(listaDeProdutos[0]);
+  }>();
 
   const adicionarProdutoSelecionado = () => {
     // Verifica se não existe um produto selecionado
@@ -73,12 +73,15 @@ export const BarraSelecaoProdutos: React.FC = () => {
     >
       <Box flex={1}>
         <Autocomplete
+          disableClearable
           size="small"
           placeholder="Pesquisar produto"
           inputValue={textoDaBusca}
-          onInputChange={(_, novoTexto) => setTextoDaBusca(novoTexto)}
+          onInputChange={(_, novoTexto) => {
+            setTextoDaBusca(novoTexto);
+          }}
           options={opcoesDeBusca}
-          value={{ key: produtoSelecionado.uuid, label: produtoSelecionado.nome }}
+          value={produtoSelecionado ? { key: produtoSelecionado.uuid, label: produtoSelecionado.nome } : undefined}
           onChange={(_, novaSelecao) => {
             const produto = listaDeProdutos.find((produto) => produto.uuid === novaSelecao?.key);
             produto ? setProdutoSelecionado(produto) : setProdutoSelecionado(listaDeProdutos[0]);
@@ -96,6 +99,7 @@ export const BarraSelecaoProdutos: React.FC = () => {
           disableElevation
           endIcon={<Icon>add</Icon>}
           onClick={adicionarProdutoSelecionado}
+          disabled={!produtoSelecionado}
         >
           Selecionar
         </Button>
