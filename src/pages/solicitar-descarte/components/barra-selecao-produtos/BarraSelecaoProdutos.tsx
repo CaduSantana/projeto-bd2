@@ -108,7 +108,7 @@ export const BarraSelecaoProdutos: React.FC = () => {
           color="primary"
           variant="contained"
           disableElevation
-          endIcon={<Icon>add</Icon>}
+          endIcon={<Icon>library_add</Icon>}
           onClick={() => modalNovoProdutoAberto.setValue(true)}
         >
           Novo
