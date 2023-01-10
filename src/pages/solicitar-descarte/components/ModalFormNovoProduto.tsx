@@ -1,8 +1,8 @@
 import { Box, Button, Modal, Paper, TextField, useTheme } from '@mui/material';
 import { useState } from 'react';
-import { AutoCompleteComboBox } from '../../../../shared/components';
-import { ICategoriaProduto } from '../../../../shared/services/api';
-import { useSolicitarDescarteContext } from '../../SolicitarDescarteContext';
+import { AutoCompleteComboBox } from '../../../shared/components';
+import { ICategoriaProduto } from '../../../shared/services/api';
+import { useSolicitarDescarteContext } from '../SolicitarDescarteContext';
 
 export const ModalFormNovoProduto: React.FC = () => {
   const theme = useTheme();

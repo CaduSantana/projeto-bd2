@@ -1,3 +1,4 @@
+import { AlertColor } from '@mui/material';
 import { createContext, useContext, useState } from 'react';
 
 interface ISolicitarDescarteContextData {
@@ -6,10 +7,12 @@ interface ISolicitarDescarteContextData {
       uuid: string;
       quantidade: number;
     }[];
-    setValue: (produtos: {
-      uuid: string;
-      quantidade: number;
-    }[]) => void;
+    setValue: (
+      produtos: {
+        uuid: string;
+        quantidade: number;
+      }[]
+    ) => void;
   };
   modalNovoProdutoAberto: {
     value: boolean;
@@ -18,6 +21,20 @@ interface ISolicitarDescarteContextData {
   modalEnderecoAberto: {
     value: boolean;
     setValue: (aberto: boolean) => void;
+  };
+  snackbar: {
+    aberto: {
+      value: boolean;
+      setValue: (aberto: boolean) => void;
+    };
+    mensagem: {
+      value: string;
+      setValue: (mensagem: string) => void;
+    };
+    tipo: {
+      value: AlertColor | undefined;
+      setValue: (tipo: AlertColor | undefined) => void;
+    };
   };
 }
 
@@ -29,30 +46,51 @@ export const useSolicitarDescarteContext = () => {
   return useContext(SolicitarDescarteContext);
 };
 
-export const SolicitarDescarteContextProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
-  const [produtosAdicionados, setProdutosAdicionados] = useState<{
-    uuid: string;
-    quantidade: number;
-  }[]>([]);
+export const SolicitarDescarteContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [produtosAdicionados, setProdutosAdicionados] = useState<
+    {
+      uuid: string;
+      quantidade: number;
+    }[]
+  >([]);
 
   const [modalNovoProdutoAberto, setModalNovoProdutoAberto] = useState(false);
   const [modalEnderecoAberto, setModalEnderecoAberto] = useState(false);
+  const [snackbarAberto, setSnackbarAberto] = useState(false);
+  const [mensagemSnackbar, setMensagemSnackbar] = useState('');
+  const [tipoAlertaSnackbar, setTipoAlertaSnackbar] = useState<AlertColor | undefined>(undefined);
 
   return (
-    <SolicitarDescarteContext.Provider value={{
-      produtosAdicionados: {
-        value: produtosAdicionados,
-        setValue: setProdutosAdicionados,
-      },
-      modalNovoProdutoAberto: {
-        value: modalNovoProdutoAberto,
-        setValue: setModalNovoProdutoAberto,
-      },
-      modalEnderecoAberto: {
-        value: modalEnderecoAberto,
-        setValue: setModalEnderecoAberto,
-      },
-    }}>
+    <SolicitarDescarteContext.Provider
+      value={{
+        produtosAdicionados: {
+          value: produtosAdicionados,
+          setValue: setProdutosAdicionados,
+        },
+        modalNovoProdutoAberto: {
+          value: modalNovoProdutoAberto,
+          setValue: setModalNovoProdutoAberto,
+        },
+        modalEnderecoAberto: {
+          value: modalEnderecoAberto,
+          setValue: setModalEnderecoAberto,
+        },
+        snackbar: {
+          aberto: {
+            value: snackbarAberto,
+            setValue: setSnackbarAberto,
+          },
+          mensagem: {
+            value: mensagemSnackbar,
+            setValue: setMensagemSnackbar,
+          },
+          tipo: {
+            value: tipoAlertaSnackbar,
+            setValue: setTipoAlertaSnackbar,
+          },
+        },
+      }}
+    >
       {children}
     </SolicitarDescarteContext.Provider>
   );
