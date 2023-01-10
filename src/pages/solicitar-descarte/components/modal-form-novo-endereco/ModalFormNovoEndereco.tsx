@@ -16,6 +16,10 @@ export const ModalFormNovoEndereco: React.FC = () => {
   const [cep, setCep] = useState<string>('');
   const [complemento, setComplemento] = useState<string>('');
 
+  const TAMANHO_MAXIMO_RUA = 45;
+  const TAMANHO_MAXIMO_NUMERO = 5;
+  const TAMANHO_MAXIMO_BAIRRO = 45;
+  const TAMANHO_MAXIMO_CEP = 8;
   const TAMANHO_MAXIMO_COMPLEMENTO = 280;
 
   return (
@@ -36,7 +40,6 @@ export const ModalFormNovoEndereco: React.FC = () => {
         <Box display='flex' flexDirection='column' gap={2} component='form'>
           <Box display='flex' flexDirection='row' gap={2}>
             <Select
-              label='UF'
               value={ufId}
               onChange={(e) => {
                 setUfId(e.target.value as number);
@@ -48,7 +51,6 @@ export const ModalFormNovoEndereco: React.FC = () => {
             </Select>
 
             <Select
-              label='Cidade'
               value={cidadeId}
               onChange={(e) => {
                 setCidadeId(e.target.value as number);
@@ -62,44 +64,53 @@ export const ModalFormNovoEndereco: React.FC = () => {
           <Box display='flex' flexDirection='row' gap={2}>
             <TextField
               size='small'
-              placeholder='Rua, Passeio, Logradouro'
+              label='Rua, Passeio, Logradouro'
+              required
               value={rua}
               onChange={(event) => {
-                setRua(event.target.value);
+                if (event.target.value.length <= TAMANHO_MAXIMO_RUA) {
+                  setRua(event.target.value);
+                }
               }}
+              error={rua.length === 0}
             />
             <TextField
               size='small'
-              placeholder='Número'
+              label='Número'
               value={numero}
               onChange={(event) => {
-                if (!isNaN(Number(event.target.value))) {
+                if (!isNaN(Number(event.target.value)) && event.target.value.length <= TAMANHO_MAXIMO_NUMERO) {
                   setNumero(event.target.value);
                 }
               }}
             />
             <TextField
               size='small'
-              placeholder='Bairro'
+              label='Bairro'
+              required
               value={bairro}
               onChange={(event) => {
-                setBairro(event.target.value);
+                if (event.target.value.length <= TAMANHO_MAXIMO_BAIRRO) {
+                  setBairro(event.target.value);
+                }
               }}
+              error={bairro.length === 0}
             />
             <TextField
               size='small'
-              placeholder='CEP'
+              label='CEP'
               value={cep}
               onChange={(event) => {
-                if (!isNaN(Number(event.target.value)) && event.target.value.length <= 8) {
+                if (!isNaN(Number(event.target.value)) && event.target.value.length <= TAMANHO_MAXIMO_CEP) {
                   setCep(event.target.value);
                 }
               }}
+              error={cep.length > 0 && cep.length < TAMANHO_MAXIMO_CEP}
             />
           </Box>
           <Box display='flex' flexDirection='row' gap={2}>
             <TextField
-              placeholder='Complemento'
+              label='Complemento'
               value={complemento}
               onChange={(event) => {
                 if (event.target.value.length <= TAMANHO_MAXIMO_COMPLEMENTO) {
