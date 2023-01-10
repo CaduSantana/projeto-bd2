@@ -1,6 +1,6 @@
 import { Autocomplete, Box, Button, Icon, Paper, TextField, useTheme } from '@mui/material';
 import { useState } from 'react';
-import { useSolicitarDescarteContext } from '../../SolicitarDescarteContext';
+import { useSolicitarDescarteContext } from '../SolicitarDescarteContext';
 
 export const BarraSelecaoProdutos: React.FC = () => {
   const listaDeProdutos = [

@@ -1,7 +1,6 @@
 import { Alert, Button, Snackbar } from '@mui/material';
 import { LayoutBase } from '../../shared/layouts';
-import { TabelaProdutos, ModalFormNovoProduto, BarraSelecaoProdutos } from './components';
-import { ModalFormNovoEndereco } from './components/modal-form-novo-endereco/ModalFormNovoEndereco';
+import { TabelaProdutos, ModalFormNovoProduto, BarraSelecaoProdutos, ModalFormEndereco } from './components';
 import { SolicitarDescarteContextProvider, useSolicitarDescarteContext } from './SolicitarDescarteContext';
 
 const SolicitarDescarteI: React.FC = () => {
@@ -20,7 +19,7 @@ const SolicitarDescarteI: React.FC = () => {
       </Button>
 
       <ModalFormNovoProduto />
-      <ModalFormNovoEndereco />
+      <ModalFormEndereco />
 
       <Snackbar
         open={snackbar.aberto.value}

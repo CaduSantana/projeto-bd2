@@ -1,8 +1,8 @@
 import { Box, Button, MenuItem, Modal, Paper, Select, TextField, useTheme } from '@mui/material';
 import { useState } from 'react';
-import { useSolicitarDescarteContext } from '../../SolicitarDescarteContext';
+import { useSolicitarDescarteContext } from '../SolicitarDescarteContext';
 
-export const ModalFormNovoEndereco: React.FC = () => {
+export const ModalFormEndereco: React.FC = () => {
   const theme = useTheme();
 
   const { modalEnderecoAberto, snackbar } = useSolicitarDescarteContext();

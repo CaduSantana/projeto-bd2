@@ -11,7 +11,7 @@ import {
   TextField,
   useTheme,
 } from '@mui/material';
-import { useSolicitarDescarteContext } from '../../SolicitarDescarteContext';
+import { useSolicitarDescarteContext } from '../SolicitarDescarteContext';
 
 export const TabelaProdutos: React.FC = () => {
   const theme = useTheme();
