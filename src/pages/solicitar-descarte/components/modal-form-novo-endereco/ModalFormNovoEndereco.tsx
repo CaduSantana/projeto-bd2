@@ -23,7 +23,7 @@ export const ModalFormNovoEndereco: React.FC = () => {
       open={modalEnderecoAberto.value}
       onClose={() => modalEnderecoAberto.setValue(false)}
       component={Box}
-      boxSizing="border-box"
+      boxSizing='border-box'
       sx={{
         display: 'flex',
         alignItems: 'center',
@@ -33,10 +33,10 @@ export const ModalFormNovoEndereco: React.FC = () => {
       }}
     >
       <Box component={Paper} padding={theme.spacing(4)}>
-        <Box display="flex" flexDirection="column" gap={2} component="form">
-          <Box display="flex" flexDirection="row" gap={2}>
+        <Box display='flex' flexDirection='column' gap={2} component='form'>
+          <Box display='flex' flexDirection='row' gap={2}>
             <Select
-              label="UF"
+              label='UF'
               value={ufId}
               onChange={(e) => {
                 setUfId(e.target.value as number);
@@ -48,7 +48,7 @@ export const ModalFormNovoEndereco: React.FC = () => {
             </Select>
 
             <Select
-              label="Cidade"
+              label='Cidade'
               value={cidadeId}
               onChange={(e) => {
                 setCidadeId(e.target.value as number);
@@ -59,18 +59,18 @@ export const ModalFormNovoEndereco: React.FC = () => {
               <MenuItem value={2}>Presidente Epitácio</MenuItem>
             </Select>
           </Box>
-          <Box display="flex" flexDirection="row" gap={2}>
+          <Box display='flex' flexDirection='row' gap={2}>
             <TextField
-              size="small"
-              placeholder="Rua, Passeio, Logradouro"
+              size='small'
+              placeholder='Rua, Passeio, Logradouro'
               value={rua}
               onChange={(event) => {
                 setRua(event.target.value);
               }}
             />
             <TextField
-              size="small"
-              placeholder="Número"
+              size='small'
+              placeholder='Número'
               value={numero}
               onChange={(event) => {
                 if (!isNaN(Number(event.target.value))) {
@@ -79,16 +79,16 @@ export const ModalFormNovoEndereco: React.FC = () => {
               }}
             />
             <TextField
-              size="small"
-              placeholder="Bairro"
+              size='small'
+              placeholder='Bairro'
               value={bairro}
               onChange={(event) => {
                 setBairro(event.target.value);
               }}
             />
             <TextField
-              size="small"
-              placeholder="CEP"
+              size='small'
+              placeholder='CEP'
               value={cep}
               onChange={(event) => {
                 if (!isNaN(Number(event.target.value)) && event.target.value.length <= 8) {
@@ -97,9 +97,9 @@ export const ModalFormNovoEndereco: React.FC = () => {
               }}
             />
           </Box>
-          <Box display="flex" flexDirection="row" gap={2}>
+          <Box display='flex' flexDirection='row' gap={2}>
             <TextField
-              placeholder="Complemento"
+              placeholder='Complemento'
               value={complemento}
               onChange={(event) => {
                 if (event.target.value.length <= TAMANHO_MAXIMO_COMPLEMENTO) {
@@ -111,9 +111,9 @@ export const ModalFormNovoEndereco: React.FC = () => {
               maxRows={4}
             />
           </Box>
-          <Box display="flex" flexDirection="row">
+          <Box display='flex' flexDirection='row'>
             <Button
-              variant="contained"
+              variant='contained'
               fullWidth
               onClick={() => {
                 // Faz o submit, roteia para fora da página.
