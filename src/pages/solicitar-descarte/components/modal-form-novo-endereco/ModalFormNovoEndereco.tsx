@@ -1,13 +1,11 @@
 import { Box, Button, MenuItem, Modal, Paper, Select, TextField, useTheme } from '@mui/material';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useSolicitarDescarteContext } from '../../SolicitarDescarteContext';
 
 export const ModalFormNovoEndereco: React.FC = () => {
   const theme = useTheme();
-  const navigate = useNavigate();
 
-  const { modalEnderecoAberto } = useSolicitarDescarteContext();
+  const { modalEnderecoAberto, snackbar } = useSolicitarDescarteContext();
   const [ufId, setUfId] = useState<number>(1);
   const [cidadeId, setCidadeId] = useState<number>(1);
   const [rua, setRua] = useState<string>('');
@@ -127,9 +125,10 @@ export const ModalFormNovoEndereco: React.FC = () => {
               variant='contained'
               fullWidth
               onClick={() => {
-                // Faz o submit, roteia para fora da página.
-
-                navigate('/');
+                modalEnderecoAberto.setValue(false);
+                snackbar.tipo.setValue('success');
+                snackbar.mensagem.setValue('Solicitação de descarte realizada com sucesso!');
+                snackbar.aberto.setValue(true);
               }}
             >
               Solicitar Descarte
