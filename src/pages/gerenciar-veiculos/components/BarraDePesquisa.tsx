@@ -1,7 +1,11 @@
 import { Button, Icon, Paper, TextField, useTheme } from '@mui/material';
 import { Box } from '@mui/system';
 
-export const BarraDePesquisa: React.FC = () => {
+interface IBarraDePesquisaProps {
+  onAdicionar: () => void;
+}
+
+export const BarraDePesquisa: React.FC<IBarraDePesquisaProps> = ({ onAdicionar }) => {
   const theme = useTheme();
 
   return (
@@ -16,7 +20,8 @@ export const BarraDePesquisa: React.FC = () => {
     >
       <TextField size='small' placeholder='Pesquisar...' fullWidth />
       <Button variant='contained'
-      endIcon={<Icon>library_add</Icon>}>
+      endIcon={<Icon>library_add</Icon>}
+      onClick={onAdicionar}>
         Adicionar
       </Button>
     </Box>

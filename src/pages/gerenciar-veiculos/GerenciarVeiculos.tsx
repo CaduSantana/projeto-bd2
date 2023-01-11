@@ -20,21 +20,29 @@ export const GerenciarVeiculos: React.FC = () => {
     },
   ];
 
-  const [modalVeiculoAberto, setModalVeiculoAberto] = useState<boolean>(false);
-  const [veiculoSelecionado, setVeiculoSelecionado] = useState<IVeiculo>();
-
-  const editarVeiculo = (linhaIndex: number) => {
-    setVeiculoSelecionado(veiculos[linhaIndex]);
+  function abrirModalCadastro() {
+    setVeiculoSelecionado(undefined);
+    setModalAction('create');
     setModalVeiculoAberto(true);
-  };
+  }
 
-  const excluirVeiculo = (linhaIndex: number) => {
-    // TODO: Exibir modal de confirmação
-  };
+  function abrirModalEdicao(linhaIndex: number) {
+    setVeiculoSelecionado(veiculos[linhaIndex]);
+    setModalAction('edit');
+    setModalVeiculoAberto(true);
+  }
+
+  function abrirModalExclusao(linhaIndex: number) {
+    // TODO: Exibir modal de confirmação de exclusão
+  }
+
+  const [modalVeiculoAberto, setModalVeiculoAberto] = useState<boolean>(false);
+  const [modalAction, setModalAction] = useState<'create' | 'edit'>('create');
+  const [veiculoSelecionado, setVeiculoSelecionado] = useState<IVeiculo>();
 
   return (
     <LayoutBase title='Gerenciar veículos'>
-      <BarraDePesquisa />
+      <BarraDePesquisa onAdicionar={abrirModalCadastro} />
       <Tabela
         cabecalho={['Placa', 'Tipo', 'Capacidade (kg)']}
         alinhamentos={['left', 'left', 'right']}
@@ -43,24 +51,25 @@ export const GerenciarVeiculos: React.FC = () => {
           {
             icon: 'edit',
             funcao: (linhaIndex: number) => {
-              editarVeiculo(linhaIndex);
+              abrirModalEdicao(linhaIndex);
             },
           },
           {
             icon: 'delete',
             funcao: (linhaIndex: number) => {
-              excluirVeiculo(linhaIndex);
+              abrirModalExclusao(linhaIndex);
             },
           },
         ]}
       />
 
       <ModalVeiculo
-      open={modalVeiculoAberto}
-      veiculo={veiculoSelecionado}
-      onClose={() => {
-        setModalVeiculoAberto(false);
-      }}
+        open={modalVeiculoAberto}
+        veiculo={veiculoSelecionado}
+        onClose={() => {
+          setModalVeiculoAberto(false);
+        }}
+        action={modalAction}
       />
     </LayoutBase>
   );
