@@ -1,7 +1,8 @@
 import { Tabela } from '../../shared/components';
 import { LayoutBase } from '../../shared/layouts';
-import { BarraDePesquisa } from './components';
+import { BarraDePesquisa, ModalVeiculo } from './components';
 import { IVeiculo } from '../../shared/services/api';
+import { useState } from 'react';
 
 export const GerenciarVeiculos: React.FC = () => {
   const veiculos: IVeiculo[] = [
@@ -19,8 +20,12 @@ export const GerenciarVeiculos: React.FC = () => {
     },
   ];
 
+  const [modalVeiculoAberto, setModalVeiculoAberto] = useState<boolean>(false);
+  const [veiculoSelecionado, setVeiculoSelecionado] = useState<IVeiculo>();
+
   const editarVeiculo = (linhaIndex: number) => {
-    // TODO: Exibir modal de edição
+    setVeiculoSelecionado(veiculos[linhaIndex]);
+    setModalVeiculoAberto(true);
   };
 
   const excluirVeiculo = (linhaIndex: number) => {
@@ -48,6 +53,14 @@ export const GerenciarVeiculos: React.FC = () => {
             },
           },
         ]}
+      />
+
+      <ModalVeiculo
+      open={modalVeiculoAberto}
+      veiculo={veiculoSelecionado}
+      onClose={() => {
+        setModalVeiculoAberto(false);
+      }}
       />
     </LayoutBase>
   );
