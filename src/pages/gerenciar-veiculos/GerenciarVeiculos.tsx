@@ -1,4 +1,4 @@
-import { Tabela } from '../../shared/components';
+import { Tabela, ModalConfirmacao } from '../../shared/components';
 import { LayoutBase } from '../../shared/layouts';
 import { BarraDePesquisa, ModalVeiculo } from './components';
 import { IVeiculo } from '../../shared/services/api';
@@ -33,9 +33,11 @@ export const GerenciarVeiculos: React.FC = () => {
   }
 
   function abrirModalExclusao(linhaIndex: number) {
-    // TODO: Exibir modal de confirmação de exclusão
+    setVeiculoSelecionado(veiculos[linhaIndex]);
+    setModalConfirmacaoExclusaoAberto(true);
   }
 
+  const [modalConfirmacaoExclusaoAberto, setModalConfirmacaoExclusaoAberto] = useState<boolean>(false);
   const [modalVeiculoAberto, setModalVeiculoAberto] = useState<boolean>(false);
   const [modalAction, setModalAction] = useState<'create' | 'edit'>('create');
   const [veiculoSelecionado, setVeiculoSelecionado] = useState<IVeiculo>();
@@ -63,6 +65,17 @@ export const GerenciarVeiculos: React.FC = () => {
         ]}
       />
 
+      <ModalConfirmacao
+        open={modalConfirmacaoExclusaoAberto}
+        onClose={() => {
+          setModalConfirmacaoExclusaoAberto(false);
+        }}
+        title='Excluir veículo'
+        message='Deseja realmente excluir este veículo?'
+        onConfirm={() => {
+          // TODO função que exclui veículo do Banco de Dados.
+        }}
+      />
       <ModalVeiculo
         open={modalVeiculoAberto}
         veiculo={veiculoSelecionado}
