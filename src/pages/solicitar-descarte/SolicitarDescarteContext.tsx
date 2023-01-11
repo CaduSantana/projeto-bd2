@@ -1,5 +1,5 @@
 import { AlertColor } from '@mui/material';
-import { createContext, useContext, useState } from 'react';
+import { createContext, useCallback, useContext, useState } from 'react';
 
 interface ISolicitarDescarteContextData {
   produtosAdicionados: {
@@ -47,12 +47,20 @@ export const useSolicitarDescarteContext = () => {
 };
 
 export const SolicitarDescarteContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const loadProdutosAdicionados = () => {
+    const produtosAdicionados = localStorage.getItem('produtosAdicionados');
+    if (produtosAdicionados) {
+      return JSON.parse(produtosAdicionados);
+    }
+    return [];
+  };
+  
   const [produtosAdicionados, setProdutosAdicionados] = useState<
     {
       uuid: string;
       quantidade: number;
     }[]
-  >([]);
+  >(loadProdutosAdicionados());
 
   const [modalNovoProdutoAberto, setModalNovoProdutoAberto] = useState(false);
   const [modalEnderecoAberto, setModalEnderecoAberto] = useState(false);
@@ -60,12 +68,25 @@ export const SolicitarDescarteContextProvider: React.FC<{ children: React.ReactN
   const [mensagemSnackbar, setMensagemSnackbar] = useState('');
   const [tipoAlertaSnackbar, setTipoAlertaSnackbar] = useState<AlertColor | undefined>(undefined);
 
+  const setSaveProdutosAdicionados = useCallback(
+    (
+      produtosAdicionados: {
+        uuid: string;
+        quantidade: number;
+      }[]
+    ) => {
+      setProdutosAdicionados(produtosAdicionados);
+      localStorage.setItem('produtosAdicionados', JSON.stringify(produtosAdicionados));
+    },
+    []
+  );
+
   return (
     <SolicitarDescarteContext.Provider
       value={{
         produtosAdicionados: {
           value: produtosAdicionados,
-          setValue: setProdutosAdicionados,
+          setValue: setSaveProdutosAdicionados,
         },
         modalNovoProdutoAberto: {
           value: modalNovoProdutoAberto,
