@@ -1,4 +1,6 @@
 import {
+  Icon,
+  IconButton,
   Paper,
   Table,
   TableBody,
@@ -10,22 +12,15 @@ import {
 
 interface ITabelaProps {
   cabecalho: string[];
-  alinhamentos: (
-    | 'center'
-    | 'left'
-    | 'right'
-    | 'justify'
-    | 'inherit'
-    | undefined
-  )[];
+  alinhamentos: ('center' | 'left' | 'right' | 'justify' | 'inherit' | undefined)[];
   linhas: string[][];
+  acoes?: {
+    icon: string;
+    funcao: (linhaIndex: number) => void;
+  }[];
 }
 
-export const Tabela: React.FC<ITabelaProps> = ({
-  cabecalho,
-  alinhamentos,
-  linhas,
-}) => {
+export const Tabela: React.FC<ITabelaProps> = ({ cabecalho, alinhamentos, linhas, acoes }) => {
   return (
     <TableContainer component={Paper}>
       <Table>
@@ -36,16 +31,26 @@ export const Tabela: React.FC<ITabelaProps> = ({
                 {cabecalho}
               </TableCell>
             ))}
+            {acoes && <TableCell align='right'>Ações</TableCell>}
           </TableRow>
         </TableHead>
         <TableBody>
-          {linhas.map((linha, index) => (
-            <TableRow key={index}>
+          {linhas.map((linha, linhaIndex) => (
+            <TableRow key={linhaIndex}>
               {linha.map((celula, index) => (
                 <TableCell key={index} align={alinhamentos[index]}>
                   {celula}
                 </TableCell>
               ))}
+              {acoes && (
+                <TableCell align='right'>
+                  {acoes.map((acao, index) => (
+                    <IconButton key={index} onClick={() => acao.funcao(linhaIndex)}>
+                      <Icon>{acao.icon}</Icon>
+                    </IconButton>
+                  ))}
+                </TableCell>
+              )}
             </TableRow>
           ))}
         </TableBody>

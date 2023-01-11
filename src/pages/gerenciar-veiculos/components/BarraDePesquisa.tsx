@@ -1,4 +1,4 @@
-import { Paper, TextField, useTheme } from '@mui/material';
+import { Button, Icon, Paper, TextField, useTheme } from '@mui/material';
 import { Box } from '@mui/system';
 
 export const BarraDePesquisa: React.FC = () => {
@@ -15,6 +15,10 @@ export const BarraDePesquisa: React.FC = () => {
       component={Paper}
     >
       <TextField size='small' placeholder='Pesquisar...' fullWidth />
+      <Button variant='contained'
+      endIcon={<Icon>library_add</Icon>}>
+        Adicionar
+      </Button>
     </Box>
   );
 };
