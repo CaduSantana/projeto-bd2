@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { Dashboard, SolicitarDescarte } from '../pages';
+import { Dashboard, SolicitarDescarte, GerenciarVeiculos } from '../pages';
 import { useDrawerContext } from '../shared/contexts';
 
 export const AppRoutes = () => {
@@ -18,6 +18,11 @@ export const AppRoutes = () => {
         path: '/solicitar-descarte',
         label: 'Solicitar um descarte',
       },
+      {
+        icon: 'local_shipping',
+        path: '/gerenciar-veiculos',
+        label: 'Gerenciar veículos',
+      },
     ]);
   }, []);
 
@@ -25,7 +30,7 @@ export const AppRoutes = () => {
     <Routes>
       <Route path='/pagina-inicial' element={<Dashboard />} />
       <Route path='/solicitar-descarte' element={<SolicitarDescarte />} />
-
+      <Route path='/gerenciar-veiculos' element={<GerenciarVeiculos />} />
       <Route path='*' element={<Navigate to='/pagina-inicial' />} /> {/* Redirect to home page */}
     </Routes>
   );
