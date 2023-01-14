@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { Dashboard, SolicitarDescarte, GerenciarVeiculos, GerenciarFuncionarios } from '../pages';
+import { Dashboard, SolicitarDescarte, GerenciarVeiculos, GerenciarFuncionarios, ExecutarDescarte } from '../pages';
 import { useDrawerContext } from '../shared/contexts';
 
 export const AppRoutes = () => {
@@ -12,6 +12,11 @@ export const AppRoutes = () => {
         icon: 'home',
         path: '/pagina-inicial',
         label: 'Página inicial',
+      },
+      {
+        icon: 'auto_delete',
+        path: '/executar-descarte',
+        label: 'Executar um descarte',
       },
       {
         icon: 'restore_from_trash',
@@ -37,6 +42,7 @@ export const AppRoutes = () => {
       <Route path='/solicitar-descarte' element={<SolicitarDescarte />} />
       <Route path='/gerenciar-veiculos' element={<GerenciarVeiculos />} />
       <Route path='/gerenciar-funcionarios' element={<GerenciarFuncionarios />} />
+      <Route path='/executar-descarte' element={<ExecutarDescarte />} />
       <Route path='*' element={<Navigate to='/pagina-inicial' />} /> {/* Redirect to home page */}
     </Routes>
   );
