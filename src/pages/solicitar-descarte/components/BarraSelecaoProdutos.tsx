@@ -1,24 +1,10 @@
 import { Autocomplete, Box, Button, Icon, Paper, TextField, useTheme } from '@mui/material';
 import { useState } from 'react';
+import { getExemploProduto, IProduto } from '../../../shared/services/api';
 import { useSolicitarDescarteContext } from '../SolicitarDescarteContext';
 
 export const BarraSelecaoProdutos: React.FC = () => {
-  const listaDeProdutos = [
-    {
-      uuid: '1',
-      nome: 'Produto 1',
-      descricao: 'Descrição 1',
-      massa: 100,
-      categoria: 'Categoria 1',
-    },
-    {
-      uuid: '2',
-      nome: 'Produto 2',
-      descricao: 'Descrição 2',
-      massa: 200,
-      categoria: 'Categoria 2',
-    },
-  ];
+  const listaDeProdutos = [getExemploProduto()];
 
   const theme = useTheme();
   const { produtosAdicionados, modalNovoProdutoAberto } = useSolicitarDescarteContext();
@@ -28,13 +14,7 @@ export const BarraSelecaoProdutos: React.FC = () => {
     label: produto.nome,
   }));
 
-  const [produtoSelecionado, setProdutoSelecionado] = useState<{
-    uuid: string;
-    nome: string;
-    descricao: string;
-    massa: number;
-    categoria: string;
-  }>();
+  const [produtoSelecionado, setProdutoSelecionado] = useState<IProduto>();
 
   const adicionarProdutoSelecionado = () => {
     // Verifica se não existe um produto selecionado
@@ -66,16 +46,16 @@ export const BarraSelecaoProdutos: React.FC = () => {
       height={theme.spacing(5)}
       padding={1}
       paddingX={2}
-      display="flex"
+      display='flex'
       gap={1}
-      alignItems="center"
+      alignItems='center'
       component={Paper}
     >
       <Box flex={1}>
         <Autocomplete
           disableClearable
-          size="small"
-          placeholder="Pesquisar produto"
+          size='small'
+          placeholder='Pesquisar produto'
           inputValue={textoDaBusca}
           onInputChange={(_, novoTexto) => {
             setTextoDaBusca(novoTexto);
@@ -86,16 +66,16 @@ export const BarraSelecaoProdutos: React.FC = () => {
             const produto = listaDeProdutos.find((produto) => produto.uuid === novaSelecao?.key);
             produto ? setProdutoSelecionado(produto) : setProdutoSelecionado(listaDeProdutos[0]);
           }}
-          noOptionsText="Nenhum produto encontrado"
+          noOptionsText='Nenhum produto encontrado'
           isOptionEqualToValue={(option, value) => option.key === value.key}
           renderInput={(params) => <TextField {...params} />}
         />
       </Box>
 
-      <Box display="flex" justifyContent="end" gap={2}>
+      <Box display='flex' justifyContent='end' gap={2}>
         <Button
-          color="primary"
-          variant="contained"
+          color='primary'
+          variant='contained'
           disableElevation
           endIcon={<Icon>add</Icon>}
           onClick={adicionarProdutoSelecionado}
@@ -105,8 +85,8 @@ export const BarraSelecaoProdutos: React.FC = () => {
         </Button>
 
         <Button
-          color="primary"
-          variant="contained"
+          color='primary'
+          variant='contained'
           disableElevation
           endIcon={<Icon>library_add</Icon>}
           onClick={() => modalNovoProdutoAberto.setValue(true)}

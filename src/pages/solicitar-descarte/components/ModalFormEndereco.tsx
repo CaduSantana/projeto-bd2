@@ -1,9 +1,13 @@
 import { Box, Button, MenuItem, Modal, Paper, Select, TextField, useTheme } from '@mui/material';
 import { useState } from 'react';
+import { getExemploMunicipio, getExemploUF } from '../../../shared/services/api';
 import { useSolicitarDescarteContext } from '../SolicitarDescarteContext';
 
 export const ModalFormEndereco: React.FC = () => {
   const theme = useTheme();
+
+  const listaDeUFs = [getExemploUF()];
+  const listaDeMunicipios = [getExemploMunicipio()];
 
   const { modalEnderecoAberto, snackbar } = useSolicitarDescarteContext();
   const [ufId, setUfId] = useState<number>(1);
@@ -44,8 +48,11 @@ export const ModalFormEndereco: React.FC = () => {
               }}
               fullWidth
             >
-              <MenuItem value={1}>São Paulo</MenuItem>
-              <MenuItem value={2}>Rio de Janeiro</MenuItem>
+              {listaDeUFs.map((uf) => (
+                <MenuItem key={uf.id} value={uf.id}>
+                  {uf.nome}
+                </MenuItem>
+              ))}
             </Select>
 
             <Select
@@ -55,8 +62,13 @@ export const ModalFormEndereco: React.FC = () => {
               }}
               fullWidth
             >
-              <MenuItem value={1}>Presidente Prudente</MenuItem>
-              <MenuItem value={2}>Presidente Epitácio</MenuItem>
+              {listaDeMunicipios
+                .filter((municipio) => municipio.uf.id === ufId)
+                .map((municipio) => (
+                  <MenuItem key={municipio.id} value={municipio.id}>
+                    {municipio.nome}
+                  </MenuItem>
+                ))}
             </Select>
           </Box>
           <Box display='flex' flexDirection='row' gap={2}>
