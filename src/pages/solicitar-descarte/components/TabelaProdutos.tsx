@@ -11,28 +11,14 @@ import {
   TextField,
   useTheme,
 } from '@mui/material';
+import { getExemploProduto } from '../../../shared/services/api';
 import { useSolicitarDescarteContext } from '../SolicitarDescarteContext';
 
 export const TabelaProdutos: React.FC = () => {
   const theme = useTheme();
   const { produtosAdicionados } = useSolicitarDescarteContext();
 
-  const listaDeProdutos = [
-    {
-      uuid: '1',
-      nome: 'Produto 1',
-      descricao: 'Descrição 1',
-      massa: 100,
-      categoria: 'Categoria 1',
-    },
-    {
-      uuid: '2',
-      nome: 'Produto 2',
-      descricao: 'Descrição 2',
-      massa: 200,
-      categoria: 'Categoria 2',
-    },
-  ];
+  const listaDeProdutos = [getExemploProduto()];
 
   const cabecalho = ['Nome', 'Descrição', 'Massa aproximada (g)', 'Categoria', 'Quantidade', 'Deletar'];
   const alinhamentos: ('left' | 'right' | 'center' | 'justify' | 'inherit' | undefined)[] = [
@@ -44,19 +30,19 @@ export const TabelaProdutos: React.FC = () => {
     'center',
   ];
 
-  const mapProdutosAdicionadosToLinhas: () => string[][] = () => {
+  function mapProdutosAdicionadosToLinhas() {
     return produtosAdicionados.value.map((produtoAdicionado) => {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const produto = listaDeProdutos.find((produto) => produto.uuid === produtoAdicionado.uuid)!;
       return [
         produto.nome,
         produto.descricao,
-        produto.massa.toString(),
-        produto.categoria,
+        produto.massa ? produto.massa.toString() : 'Não informado',
+        produto.categoria.nome,
         produtoAdicionado.quantidade.toString(),
       ];
     });
-  };
+  }
 
   return (
     <TableContainer component={Paper}>
@@ -77,7 +63,7 @@ export const TabelaProdutos: React.FC = () => {
                 <TableCell key={colunaIndex} align={alinhamentos[colunaIndex]}>
                   {colunaIndex === 4 ? (
                     <TextField
-                      size="small"
+                      size='small'
                       value={celula}
                       onChange={(event) => {
                         const novaQuantidade = parseInt(event.target.value);
@@ -97,11 +83,13 @@ export const TabelaProdutos: React.FC = () => {
                 </TableCell>
               ))}
               <TableCell align={alinhamentos[5]}>
-                <IconButton onClick={() => {
-                  const novoProdutosAdicionados = [...produtosAdicionados.value];
-                  novoProdutosAdicionados.splice(linhaIndex, 1);
-                  produtosAdicionados.setValue(novoProdutosAdicionados);
-                }}>
+                <IconButton
+                  onClick={() => {
+                    const novoProdutosAdicionados = [...produtosAdicionados.value];
+                    novoProdutosAdicionados.splice(linhaIndex, 1);
+                    produtosAdicionados.setValue(novoProdutosAdicionados);
+                  }}
+                >
                   <Icon>delete</Icon>
                 </IconButton>
               </TableCell>
