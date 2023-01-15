@@ -15,6 +15,22 @@ export const TabelaDescartes = () => {
       descarte.produtosDescartados.map((itemProduto) => `${itemProduto.produto.nome} (${itemProduto.quantidade})`).join(', '),
       `${descarte.origem.rua}, ${descarte.origem.numero} - ${descarte.origem.bairro}`,
     ])}
+    acoes={
+    [
+      {
+        icon: 'map',
+        funcao: () => {
+          // TODO mostrar a localização no mapa usando Leaflet
+        }
+      },
+      {
+        icon: 'auto_delete',
+        funcao: () => {
+          // TODO mostrar modal de confirmação de descarte
+          // TODO preencher modal com funcionários e veículos utilizados por cada um
+        }
+      }
+    ]}
     />
   );
 };
