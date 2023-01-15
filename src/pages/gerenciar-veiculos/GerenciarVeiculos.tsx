@@ -1,24 +1,11 @@
 import { Tabela, ModalConfirmacao } from '../../shared/components';
 import { LayoutBase } from '../../shared/layouts';
 import { BarraDePesquisa, ModalVeiculo } from './components';
-import { IVeiculo } from '../../shared/services/api';
+import { getExemploVeiculo, IVeiculo } from '../../shared/services/api';
 import { useState } from 'react';
 
 export const GerenciarVeiculos: React.FC = () => {
-  const veiculos: IVeiculo[] = [
-    {
-      uuid: '1',
-      placa: 'ABC-1234',
-      tipo: 'Caminhão',
-      capacidade: 1000,
-    },
-    {
-      uuid: '2',
-      placa: 'CBA-4321',
-      tipo: 'Caminhão',
-      capacidade: 1000,
-    },
-  ];
+  const veiculos: IVeiculo[] = [getExemploVeiculo()];
 
   function abrirModalCadastro() {
     setVeiculoSelecionado(undefined);

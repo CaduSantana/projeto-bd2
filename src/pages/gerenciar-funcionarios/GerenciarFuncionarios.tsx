@@ -1,32 +1,11 @@
 import { useState } from 'react';
 import { ModalConfirmacao, Tabela } from '../../shared/components';
 import { LayoutBase } from '../../shared/layouts';
-import { IPessoa } from '../../shared/services/api';
+import { getExemploFuncionario, IPessoa } from '../../shared/services/api';
 import { BarraDePesquisa, ModalFuncionario } from './components';
 
 export const GerenciarFuncionarios: React.FC = () => {
-  const funcionarios: IPessoa[] = [
-    {
-      uuid: '1',
-      nome: 'Fulano',
-      sobrenome: 'Da Silva',
-      cpf: '18275940386',
-      email: 'email1@email.com',
-      senha: 'senhafoda',
-      isFuncionario: true,
-      isAdmin: false,
-    },
-    {
-      uuid: '2',
-      nome: 'Beltrano',
-      sobrenome: 'Pereira',
-      cpf: '28627361947',
-      email: 'email2@email.com',
-      senha: 'senhafoda2',
-      isFuncionario: true,
-      isAdmin: false,
-    },
-  ];
+  const funcionarios: IPessoa[] = [getExemploFuncionario()];
 
   function abrirModalCadastro() {
     setFuncionarioSelecionado(undefined);
@@ -36,6 +15,7 @@ export const GerenciarFuncionarios: React.FC = () => {
 
   function abrirModalEdicao(linhaIndex: number) {
     setFuncionarioSelecionado(funcionarios[linhaIndex]);
+    setModalAction('edit');
     setModalFuncionarioAberto(true);
   }
 
