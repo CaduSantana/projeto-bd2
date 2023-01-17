@@ -8,7 +8,9 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  useTheme,
 } from '@mui/material';
+import { useEffect } from 'react';
 
 interface ITabelaProps {
   cabecalho: string[];
@@ -18,12 +20,25 @@ interface ITabelaProps {
     icon: string;
     funcao: (linhaIndex: number) => void;
   }[];
+  bgColor?: string;
 }
 
-export const Tabela: React.FC<ITabelaProps> = ({ cabecalho, alinhamentos, linhas, acoes }) => {
+export const Tabela: React.FC<ITabelaProps> = ({
+  cabecalho,
+  alinhamentos,
+  linhas,
+  acoes,
+  bgColor,
+}) => {
+  const theme = useTheme();
+
+  useEffect(() => {
+    bgColor = bgColor? bgColor : theme.palette.background.default;
+  }, [theme]);
+
   return (
     <TableContainer component={Paper}>
-      <Table>
+      <Table bgcolor={bgColor}>
         <TableHead>
           <TableRow>
             {cabecalho.map((cabecalho, index) => (
