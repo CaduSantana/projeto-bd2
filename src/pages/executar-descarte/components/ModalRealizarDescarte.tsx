@@ -3,14 +3,18 @@ import { ModalWrapper, Tabela } from '../../../shared/components';
 import { getExemploFuncionario } from '../../../shared/services/api';
 import { useExecutarDescarteContext } from '../ExecutarDescarteContext';
 
-const TabelaFuncionarios: React.FC = () => {
+const TabelaFuncionariosDisponiveis: React.FC = () => {
   const funcionarios = [getExemploFuncionario()];
   const { funcionariosSelecionados } = useExecutarDescarteContext();
-  const linhasTabela = useMemo(() => funcionarios.map((funcionario) => [
-    `${funcionario.nome} ${funcionario.sobrenome}`,
-    funcionario.cpf,
-    funcionario.email,
-  ]), [funcionarios]);
+  const linhasTabela = useMemo(
+    () =>
+      funcionarios.map((funcionario) => [
+        `${funcionario.nome} ${funcionario.sobrenome}`,
+        funcionario.cpf,
+        funcionario.email,
+      ]),
+    [funcionarios]
+  );
 
   return (
     <Tabela
@@ -21,13 +25,7 @@ const TabelaFuncionarios: React.FC = () => {
         {
           icon: 'add',
           funcao: (linhaIndex: number) => {
-            funcionariosSelecionados.setValue([
-              ...(funcionariosSelecionados.value || []),
-              {
-                funcionario: funcionarios[linhaIndex],
-                veiculoUtilizado: undefined,
-              },
-            ]);
+            funcionariosSelecionados.addFuncionario(funcionarios[linhaIndex]);
           },
         },
       ]}
@@ -36,15 +34,18 @@ const TabelaFuncionarios: React.FC = () => {
 };
 
 const ListaFuncionariosSelecionados: React.FC = () => {
+  const funcionarios = [getExemploFuncionario()];
   const { funcionariosSelecionados } = useExecutarDescarteContext();
-  const linhasTabela = useMemo(() => funcionariosSelecionados.value.map(
-    ({ funcionario, veiculoUtilizado }) => [
-      `${funcionario.nome} ${funcionario.sobrenome}`,
-      funcionario.cpf,
-      funcionario.email,
-      veiculoUtilizado? veiculoUtilizado.placa : 'Não selecionado',
-    ]
-  ),[funcionariosSelecionados.value]);
+  const linhasTabela = useMemo(
+    () =>
+      funcionariosSelecionados.value.map(({ funcionario, veiculoUtilizado }) => [
+        `${funcionario.nome} ${funcionario.sobrenome}`,
+        funcionario.cpf,
+        funcionario.email,
+        veiculoUtilizado ? veiculoUtilizado.placa : 'Não selecionado',
+      ]),
+    [funcionariosSelecionados.value]
+  );
 
   return funcionariosSelecionados.value.length > 0 ? (
     <Tabela
@@ -55,9 +56,7 @@ const ListaFuncionariosSelecionados: React.FC = () => {
         {
           icon: 'delete',
           funcao: (linhaIndex: number) => {
-            funcionariosSelecionados.setValue(
-              funcionariosSelecionados.value?.filter((_, index) => index !== linhaIndex)
-            );
+            funcionariosSelecionados.removeFuncionario(funcionarios[linhaIndex]);
           },
         },
       ]}
@@ -77,7 +76,7 @@ export const ModalRealizarDescarte: React.FC = () => {
         modalRealizarDescarte.setValue(false);
       }}
     >
-      <TabelaFuncionarios />
+      <TabelaFuncionariosDisponiveis />
       <ListaFuncionariosSelecionados />
     </ModalWrapper>
   );

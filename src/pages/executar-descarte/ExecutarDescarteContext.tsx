@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useCallback, useContext, useState } from 'react';
 import { IDescarte, IPessoa, IVeiculo } from '../../shared/services/api';
 
 interface FuncionarioVeiculo {
@@ -13,7 +13,9 @@ interface IExecutarDescarteContextData {
   };
   funcionariosSelecionados: {
     value: FuncionarioVeiculo[] | [];
-    setValue: (valor: FuncionarioVeiculo[] | []) => void;
+    addFuncionario: (funcionario: IPessoa) => void;
+    removeFuncionario: (funcionario: IPessoa) => void;
+    associateVeiculo: (funcionario: IPessoa, veiculo: IVeiculo) => void;
   };
   modalRealizarDescarte: {
     value: boolean;
@@ -32,6 +34,22 @@ export const ExecutarDescarteContextProvider: React.FC<{ children: React.ReactNo
   const [funcionariosSelecionados, setFuncionariosSelecionados] = useState<FuncionarioVeiculo[]>([]);
   const [modalRealizarDescarte, setModalRealizarDescarte] = useState(false);
 
+  const addFuncionario = useCallback((m_funcionario: IPessoa) => {
+    setFuncionariosSelecionados((state) => [...state, { funcionario: m_funcionario }]);
+  }, []);
+
+  const removeFuncionario = useCallback((m_funcionario: IPessoa) => {
+    setFuncionariosSelecionados((state) => state.filter(({ funcionario }) => funcionario.uuid !== m_funcionario.uuid));
+  }, []);
+
+  const associateVeiculo = useCallback((m_funcionario: IPessoa, m_veiculo: IVeiculo) => {
+    setFuncionariosSelecionados((state) => {
+      const funcionarioIndex = state.findIndex(({ funcionario }) => funcionario.uuid === m_funcionario.uuid);
+      state[funcionarioIndex].veiculoUtilizado = m_veiculo;
+      return state;
+    });
+  }, []);
+
   return (
     <ExecutarDescarteContext.Provider
       value={{
@@ -41,7 +59,9 @@ export const ExecutarDescarteContextProvider: React.FC<{ children: React.ReactNo
         },
         funcionariosSelecionados: {
           value: funcionariosSelecionados,
-          setValue: setFuncionariosSelecionados,
+          addFuncionario,
+          removeFuncionario,
+          associateVeiculo,
         },
         modalRealizarDescarte: {
           value: modalRealizarDescarte,
