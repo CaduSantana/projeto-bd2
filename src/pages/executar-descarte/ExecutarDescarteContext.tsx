@@ -51,11 +51,13 @@ export const ExecutarDescarteContextProvider: React.FC<{ children: React.ReactNo
   }, []);
 
   const associateVeiculo = useCallback((m_funcionario: IPessoa, m_veiculo: IVeiculo) => {
-    setFuncionariosSelecionados((state) => {
-      const funcionarioIndex = state.findIndex(({ funcionario }) => funcionario.uuid === m_funcionario.uuid);
-      state[funcionarioIndex].veiculoUtilizado = m_veiculo;
-      return state;
-    });
+    setFuncionariosSelecionados((state) =>
+      state.map((funcionarioVeiculo) =>
+        funcionarioVeiculo.funcionario.uuid === m_funcionario.uuid
+          ? { ...funcionarioVeiculo, veiculoUtilizado: m_veiculo }
+          : funcionarioVeiculo
+      )
+    );
   }, []);
 
   const information: IExecutarDescarteContextData = useMemo(
