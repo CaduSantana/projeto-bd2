@@ -6,16 +6,20 @@ import { useMemo } from 'react';
 
 export const TabelaDescartes = () => {
   const descartes = [getExemploDescarte()];
-  const { modalRealizarDescarte } = useExecutarDescarteContext();
+  const { modalRealizarDescarte, descarteSolicitado } = useExecutarDescarteContext();
 
-  const linhasTabela: string[][] = useMemo(() => descartes.map((descarte) => [
-    `${descarte.solicitante.nome} ${descarte.solicitante.sobrenome}`,
-    formatDate(descarte.solicitadoEm),
-    descarte.produtosDescartados
-      .map((itemProduto) => `${itemProduto.produto.nome} (${itemProduto.quantidade})`)
-      .join(', '),
-    `${descarte.origem.rua}, ${descarte.origem.numero} - ${descarte.origem.bairro}`,
-  ]), [descartes]);
+  const linhasTabela: string[][] = useMemo(
+    () =>
+      descartes.map((descarte) => [
+        `${descarte.solicitante.nome} ${descarte.solicitante.sobrenome}`,
+        formatDate(descarte.solicitadoEm),
+        descarte.produtosDescartados
+          .map((itemProduto) => `${itemProduto.produto.nome} (${itemProduto.quantidade})`)
+          .join(', '),
+        `${descarte.origem.rua}, ${descarte.origem.numero} - ${descarte.origem.bairro}`,
+      ]),
+    [descartes]
+  );
 
   return (
     <Tabela
@@ -31,7 +35,8 @@ export const TabelaDescartes = () => {
         },
         {
           icon: 'auto_delete',
-          funcao: () => {
+          funcao: (linhaIndex) => {
+            descarteSolicitado.setValue(descartes[linhaIndex]);
             modalRealizarDescarte.setOpen(true);
           },
         },

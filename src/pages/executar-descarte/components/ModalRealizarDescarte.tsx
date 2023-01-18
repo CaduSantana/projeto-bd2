@@ -1,4 +1,4 @@
-import { MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
+import { Button, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
 import { useMemo, useState } from 'react';
 import { ModalWrapper, Tabela } from '../../../shared/components';
 import { getExemploFuncionario, getExemploVeiculo } from '../../../shared/services/api';
@@ -125,7 +125,14 @@ const ModalSelecionarVeiculo: React.FC = () => {
 };
 
 export const ModalRealizarDescarte: React.FC = () => {
-  const { modalRealizarDescarte } = useExecutarDescarteContext();
+  const { modalRealizarDescarte, funcionariosSelecionados } = useExecutarDescarteContext();
+
+  const possivelRealizarDescarte = useMemo(
+    () =>
+      funcionariosSelecionados.value.length > 0 &&
+      funcionariosSelecionados.value.every(({ veiculoUtilizado }) => veiculoUtilizado),
+    [funcionariosSelecionados]
+  );
 
   return (
     <ModalWrapper
@@ -136,7 +143,9 @@ export const ModalRealizarDescarte: React.FC = () => {
     >
       <TabelaFuncionariosDisponiveis />
       <ListaFuncionariosSelecionados />
-
+      <Button variant='contained' disabled={!possivelRealizarDescarte}>
+        Realizar descarte
+      </Button>
       <ModalSelecionarVeiculo />
     </ModalWrapper>
   );
