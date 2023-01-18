@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useState } from 'react';
+import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { IDescarte, IPessoa, IVeiculo } from '../../shared/services/api';
 
 interface FuncionarioVeiculo {
@@ -18,8 +18,14 @@ interface IExecutarDescarteContextData {
     associateVeiculo: (funcionario: IPessoa, veiculo: IVeiculo) => void;
   };
   modalRealizarDescarte: {
-    value: boolean;
-    setValue: (valor: boolean) => void;
+    open: boolean;
+    setOpen: (valor: boolean) => void;
+  };
+  modalSelecionarVeiculo: {
+    open: boolean;
+    setOpen: (valor: boolean) => void;
+    funcionario?: IPessoa;
+    setFuncionario: (funcionario: IPessoa) => void;
   };
 }
 
@@ -33,6 +39,8 @@ export const ExecutarDescarteContextProvider: React.FC<{ children: React.ReactNo
   const [descarteSolicitado, setDescarteSolicitado] = useState<IDescarte>();
   const [funcionariosSelecionados, setFuncionariosSelecionados] = useState<FuncionarioVeiculo[]>([]);
   const [modalRealizarDescarte, setModalRealizarDescarte] = useState(false);
+  const [modalSelecionarVeiculoAberto, setModalSelecionarVeiculoAberto] = useState(false);
+  const [funcionarioSelecionado, setFuncionarioSelecionado] = useState<IPessoa>();
 
   const addFuncionario = useCallback((m_funcionario: IPessoa) => {
     setFuncionariosSelecionados((state) => [...state, { funcionario: m_funcionario }]);
@@ -50,26 +58,37 @@ export const ExecutarDescarteContextProvider: React.FC<{ children: React.ReactNo
     });
   }, []);
 
-  return (
-    <ExecutarDescarteContext.Provider
-      value={{
-        descarteSolicitado: {
-          value: descarteSolicitado,
-          setValue: setDescarteSolicitado,
-        },
-        funcionariosSelecionados: {
-          value: funcionariosSelecionados,
-          addFuncionario,
-          removeFuncionario,
-          associateVeiculo,
-        },
-        modalRealizarDescarte: {
-          value: modalRealizarDescarte,
-          setValue: setModalRealizarDescarte,
-        },
-      }}
-    >
-      {children}
-    </ExecutarDescarteContext.Provider>
+  const information: IExecutarDescarteContextData = useMemo(
+    () => ({
+      descarteSolicitado: {
+        value: descarteSolicitado,
+        setValue: setDescarteSolicitado,
+      },
+      funcionariosSelecionados: {
+        value: funcionariosSelecionados,
+        addFuncionario,
+        removeFuncionario,
+        associateVeiculo,
+      },
+      modalRealizarDescarte: {
+        open: modalRealizarDescarte,
+        setOpen: setModalRealizarDescarte,
+      },
+      modalSelecionarVeiculo: {
+        open: modalSelecionarVeiculoAberto,
+        setOpen: setModalSelecionarVeiculoAberto,
+        funcionario: funcionarioSelecionado,
+        setFuncionario: setFuncionarioSelecionado,
+      },
+    }),
+    [
+      descarteSolicitado,
+      funcionariosSelecionados,
+      modalRealizarDescarte,
+      modalSelecionarVeiculoAberto,
+      funcionarioSelecionado,
+    ]
   );
+
+  return <ExecutarDescarteContext.Provider value={information}>{children}</ExecutarDescarteContext.Provider>;
 };
