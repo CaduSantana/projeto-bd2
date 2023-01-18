@@ -43,7 +43,13 @@ export const ExecutarDescarteContextProvider: React.FC<{ children: React.ReactNo
   const [funcionarioSelecionado, setFuncionarioSelecionado] = useState<IPessoa>();
 
   const addFuncionario = useCallback((m_funcionario: IPessoa) => {
-    setFuncionariosSelecionados((state) => [...state, { funcionario: m_funcionario }]);
+    setFuncionariosSelecionados((state) => {
+      if (state.some(({ funcionario }) => funcionario.uuid === m_funcionario.uuid)) {
+        return state;
+      }
+
+      return [...state, { funcionario: m_funcionario }];
+    });
   }, []);
 
   const removeFuncionario = useCallback((m_funcionario: IPessoa) => {
