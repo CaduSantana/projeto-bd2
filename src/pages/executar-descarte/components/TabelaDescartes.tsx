@@ -2,23 +2,26 @@ import { Tabela } from '../../../shared/components';
 import { getExemploDescarte } from '../../../shared/services/api';
 import { formatDate } from '../../../shared/services';
 import { useExecutarDescarteContext } from '../ExecutarDescarteContext';
+import { useMemo } from 'react';
 
 export const TabelaDescartes = () => {
   const descartes = [getExemploDescarte()];
   const { modalRealizarDescarte } = useExecutarDescarteContext();
 
+  const linhasTabela: string[][] = useMemo(() => descartes.map((descarte) => [
+    `${descarte.solicitante.nome} ${descarte.solicitante.sobrenome}`,
+    formatDate(descarte.solicitadoEm),
+    descarte.produtosDescartados
+      .map((itemProduto) => `${itemProduto.produto.nome} (${itemProduto.quantidade})`)
+      .join(', '),
+    `${descarte.origem.rua}, ${descarte.origem.numero} - ${descarte.origem.bairro}`,
+  ]), [descartes]);
+
   return (
     <Tabela
       cabecalho={['Solicitado por', 'Momento da solicitação', 'Itens descartados', 'Local de origem']}
       alinhamentos={['left', 'left', 'center', 'left']}
-      linhas={descartes.map((descarte) => [
-        `${descarte.solicitante.nome} ${descarte.solicitante.sobrenome}`,
-        formatDate(descarte.solicitadoEm),
-        descarte.produtosDescartados
-          .map((itemProduto) => `${itemProduto.produto.nome} (${itemProduto.quantidade})`)
-          .join(', '),
-        `${descarte.origem.rua}, ${descarte.origem.numero} - ${descarte.origem.bairro}`,
-      ])}
+      linhas={linhasTabela}
       acoes={[
         {
           icon: 'map',
@@ -28,8 +31,8 @@ export const TabelaDescartes = () => {
         },
         {
           icon: 'auto_delete',
-          funcao: (linhaIndex) => {
-            modalRealizarDescarte.setValue(true);
+          funcao: () => {
+            modalRealizarDescarte.setOpen(true);
           },
         },
       ]}
