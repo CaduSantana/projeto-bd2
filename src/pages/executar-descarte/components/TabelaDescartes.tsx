@@ -1,4 +1,4 @@
-import { MapaLeaflet, IMapaLeafletProps, ModalWrapper, NovaTabela } from '../../../shared/components';
+import { MapaLeaflet, IMapaLeafletProps, ModalWrapper, Tabela } from '../../../shared/components';
 import { getExemploDescarte, IDescarte } from '../../../shared/services/api';
 import { formatDate } from '../../../shared/services';
 import { useExecutarDescarteContext } from '../ExecutarDescarteContext';
@@ -38,7 +38,7 @@ export const TabelaDescartes = () => {
 
   return (
     <>
-      <NovaTabela
+      <Tabela
         columns={[
           {
             key: 'solicitante',

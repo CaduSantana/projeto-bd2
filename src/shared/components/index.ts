@@ -6,4 +6,3 @@ export * from './tabela/Tabela';
 export * from './modal-confirmacao/ModalConfirmacao';
 export * from './modal-wrapper/ModalWrapper';
 export * from './mapa-leaflet/MapaLeaflet';
-export * from './nova-tabela/NovaTabela';

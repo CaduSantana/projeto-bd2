@@ -1,6 +1,6 @@
 import { Button, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
 import { useMemo, useState } from 'react';
-import { ModalWrapper, NovaTabela } from '../../../shared/components';
+import { ModalWrapper, Tabela } from '../../../shared/components';
 import { getExemploFuncionario, getExemploVeiculo, IPessoa, IVeiculo } from '../../../shared/services/api';
 import { useExecutarDescarteContext } from '../ExecutarDescarteContext';
 
@@ -20,7 +20,7 @@ const TabelaFuncionariosDisponiveis: React.FC = () => {
   return (
     <>
       <Typography variant='h5'>Funcionários</Typography>
-      <NovaTabela
+      <Tabela
         columns={[
           {
             key: 'nome',
@@ -73,7 +73,7 @@ const ListaFuncionariosSelecionados: React.FC = () => {
   return funcionariosSelecionados.value.length > 0 ? (
     <>
       <Typography variant='h5'>Funcionários selecionados</Typography>
-      <NovaTabela
+      <Tabela
         columns={[
           {
             key: 'nome',

@@ -1,4 +1,4 @@
-import { ModalConfirmacao, NovaTabela } from '../../shared/components';
+import { ModalConfirmacao, Tabela } from '../../shared/components';
 import { LayoutBase } from '../../shared/layouts';
 import { BarraDePesquisa, ModalVeiculo } from './components';
 import { getExemploVeiculo, IVeiculo } from '../../shared/services/api';
@@ -41,7 +41,7 @@ export const GerenciarVeiculos: React.FC = () => {
   return (
     <LayoutBase title='Gerenciar veículos'>
       <BarraDePesquisa onAdicionar={abrirModalCadastro} />
-      <NovaTabela
+      <Tabela
         columns={[
           {
             key: 'placa',
