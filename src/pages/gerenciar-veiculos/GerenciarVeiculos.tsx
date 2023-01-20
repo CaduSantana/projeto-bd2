@@ -1,8 +1,8 @@
-import { Tabela, ModalConfirmacao } from '../../shared/components';
+import { ModalConfirmacao, NovaTabela } from '../../shared/components';
 import { LayoutBase } from '../../shared/layouts';
 import { BarraDePesquisa, ModalVeiculo } from './components';
 import { getExemploVeiculo, IVeiculo } from '../../shared/services/api';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 export const GerenciarVeiculos: React.FC = () => {
   const veiculos: IVeiculo[] = [getExemploVeiculo()];
@@ -13,14 +13,14 @@ export const GerenciarVeiculos: React.FC = () => {
     setModalVeiculoAberto(true);
   }
 
-  function abrirModalEdicao(linhaIndex: number) {
-    setVeiculoSelecionado(veiculos[linhaIndex]);
+  function abrirModalEdicao(veiculo: IVeiculo) {
+    setVeiculoSelecionado(veiculo);
     setModalAction('edit');
     setModalVeiculoAberto(true);
   }
 
-  function abrirModalExclusao(linhaIndex: number) {
-    setVeiculoSelecionado(veiculos[linhaIndex]);
+  function abrirModalExclusao(veiculo: IVeiculo) {
+    setVeiculoSelecionado(veiculo);
     setModalConfirmacaoExclusaoAberto(true);
   }
 
@@ -29,24 +29,50 @@ export const GerenciarVeiculos: React.FC = () => {
   const [modalAction, setModalAction] = useState<'create' | 'edit'>('create');
   const [veiculoSelecionado, setVeiculoSelecionado] = useState<IVeiculo>();
 
+  const tableData = useMemo(
+    () =>
+      veiculos.map((veiculo) => ({
+        key: veiculo.uuid,
+        value: veiculo,
+      })),
+    [veiculos]
+  );
+
   return (
     <LayoutBase title='Gerenciar veículos'>
       <BarraDePesquisa onAdicionar={abrirModalCadastro} />
-      <Tabela
-        cabecalho={['Placa', 'Tipo', 'Capacidade (kg)']}
-        alinhamentos={['left', 'left', 'right']}
-        linhas={veiculos.map((veiculo) => [veiculo.placa, veiculo.tipo, veiculo.capacidade.toString()])}
-        acoes={[
+      <NovaTabela
+        columns={[
+          {
+            key: 'placa',
+            label: 'Placa',
+          },
+          {
+            key: 'tipo',
+            label: 'Tipo',
+          },
+          {
+            key: 'capacidade',
+            label: 'Capacidade (kg)',
+          },
+        ]}
+        alignments={['left', 'left', 'right']}
+        data={tableData}
+        mapper={(veiculo) => {
+          const veiculoValue = veiculo as IVeiculo;
+          return [veiculoValue.placa, veiculoValue.tipo, veiculoValue.capacidade.toString()];
+        }}
+        actions={[
           {
             icon: 'edit',
-            funcao: (linhaIndex: number) => {
-              abrirModalEdicao(linhaIndex);
+            onClick: function (veiculo) {
+              abrirModalEdicao(veiculo as IVeiculo);
             },
           },
           {
             icon: 'delete',
-            funcao: (linhaIndex: number) => {
-              abrirModalExclusao(linhaIndex);
+            onClick: function (veiculo) {
+              abrirModalExclusao(veiculo as IVeiculo);
             },
           },
         ]}
