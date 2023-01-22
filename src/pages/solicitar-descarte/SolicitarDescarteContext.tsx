@@ -1,15 +1,16 @@
 import { AlertColor } from '@mui/material';
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import { IProduto } from '../../shared/interfaces';
 
 interface ISolicitarDescarteContextData {
   produtosAdicionados: {
     value: {
-      uuid: string;
+      produto: IProduto;
       quantidade: number;
     }[];
     setValue: (
       produtos: {
-        uuid: string;
+        produto: IProduto;
         quantidade: number;
       }[]
     ) => void;
@@ -57,7 +58,7 @@ export const SolicitarDescarteContextProvider: React.FC<{ children: React.ReactN
 
   const [produtosAdicionados, setProdutosAdicionados] = useState<
     {
-      uuid: string;
+      produto: IProduto;
       quantidade: number;
     }[]
   >(loadProdutosAdicionados());
@@ -71,7 +72,7 @@ export const SolicitarDescarteContextProvider: React.FC<{ children: React.ReactN
   const setSaveProdutosAdicionados = useCallback(
     (
       produtosAdicionados: {
-        uuid: string;
+        produto: IProduto;
         quantidade: number;
       }[]
     ) => {

@@ -25,7 +25,7 @@ export const BarraSelecaoProdutos: React.FC = () => {
 
     // Verifica se o produto atualmente selecionado já está presente na lista
     // de produtos adicionados. Se sim, incrementa a quantidade em uma unidade.
-    const indexProduto = produtosAdicionados.value.findIndex((produto) => produto.uuid === produtoSelecionado.uuid);
+    const indexProduto = produtosAdicionados.value.findIndex(({ produto }) => produto.uuid === produtoSelecionado.uuid);
     if (indexProduto !== -1) {
       const novoProdutosAdicionados = [...produtosAdicionados.value];
       novoProdutosAdicionados[indexProduto].quantidade += 1;
@@ -35,7 +35,7 @@ export const BarraSelecaoProdutos: React.FC = () => {
       produtosAdicionados.setValue([
         ...produtosAdicionados.value,
         {
-          uuid: produtoSelecionado.uuid,
+          produto: produtoSelecionado,
           quantidade: 1,
         },
       ]);
