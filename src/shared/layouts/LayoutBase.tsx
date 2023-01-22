@@ -4,10 +4,11 @@ import { useDrawerContext } from '../contexts';
 
 interface ILayoutBaseProps {
   title: string;
+  titleVariant?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
   children: React.ReactNode;
 }
 
-export const LayoutBase: React.FC<ILayoutBaseProps> = ({ title, children }) => {
+export const LayoutBase: React.FC<ILayoutBaseProps> = ({ title, titleVariant = 'h5', children }) => {
   const theme = useTheme();
   const smDown = useMediaQuery(theme.breakpoints.down('sm'));
   const { toggleDrawerOpen } = useDrawerContext();
@@ -21,7 +22,7 @@ export const LayoutBase: React.FC<ILayoutBaseProps> = ({ title, children }) => {
           </IconButton>
         ) : undefined}
 
-        <Typography variant='h5'>{title}</Typography>
+        {title && <Typography variant={titleVariant}>{title}</Typography>}
       </Box>
 
       <Box display='flex' flexDirection='column' gap={1} marginX={2} overflow='scroll' marginBottom={1}>
