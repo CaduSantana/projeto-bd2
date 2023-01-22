@@ -119,7 +119,7 @@ export const GerenciarVeiculos: React.FC = () => {
           setModalVeiculoAberto(false);
         }}
         action={modalAction}
-        onAction={() => {
+        afterAction={() => {
           handleDataChange();
         }}
       />

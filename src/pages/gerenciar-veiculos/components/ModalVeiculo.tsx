@@ -7,7 +7,7 @@ interface IModalEditarVeiculoProps {
   open: boolean;
   onClose: () => void;
   action: 'create' | 'edit';
-  onAction: () => void;
+  afterAction: () => void;
   veiculo?: IVeiculo;
 }
 
@@ -19,7 +19,13 @@ function editarVeiculo() {
   return;
 }
 
-export const ModalVeiculo: React.FC<IModalEditarVeiculoProps> = ({ open, onClose, action, onAction, veiculo }) => {
+export const ModalVeiculo: React.FC<IModalEditarVeiculoProps> = ({
+  open,
+  onClose,
+  action,
+  afterAction: onAction,
+  veiculo,
+}) => {
   const theme = useTheme();
 
   const [placa, setPlaca] = useState<string>('');

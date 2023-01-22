@@ -47,8 +47,8 @@ export interface IPessoa {
   cpf: string;
   email: string;
   senha: string;
-  isFuncionario: boolean;
-  isAdmin: boolean;
+  is_funcionario: boolean;
+  is_admin: boolean;
 }
 
 export interface ICategoriaProduto {

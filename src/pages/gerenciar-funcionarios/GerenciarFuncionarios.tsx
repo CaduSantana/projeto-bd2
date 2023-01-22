@@ -1,12 +1,32 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ModalConfirmacao, Tabela } from '../../shared/components';
 import { LayoutBase } from '../../shared/layouts';
 import { IPessoa } from '../../shared/interfaces';
-import { getExemploFuncionario } from '../../shared/services/api';
 import { BarraDePesquisa, ModalFuncionario } from './components';
+import PessoasService from '../../shared/services/api/pessoas/PessoasService';
 
 export const GerenciarFuncionarios: React.FC = () => {
-  const funcionarios: IPessoa[] = [getExemploFuncionario()];
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [funcionarios, setFuncionarios] = useState<IPessoa[]>([]);
+
+  useEffect(() => {
+    handleDataChange();
+  }, []);
+
+  function handleDataChange() {
+    setIsLoading(true);
+
+    PessoasService.getAllFuncionarios().then((funcionarios) => {
+      setIsLoading(false);
+
+      if (funcionarios instanceof Error) {
+        // TODO exibir mensagem de erro
+        return;
+      }
+
+      setFuncionarios(funcionarios);
+    });
+  }
 
   function abrirModalCadastro() {
     setFuncionarioSelecionado(undefined);
@@ -47,7 +67,7 @@ export const GerenciarFuncionarios: React.FC = () => {
         }}
       />
 
-      <Tabela
+      {!isLoading && <Tabela
         columns={[
           {
             key: 'nome',
@@ -86,7 +106,7 @@ export const GerenciarFuncionarios: React.FC = () => {
             },
           },
         ]}
-      />
+      />}
 
       <ModalConfirmacao
         open={modalConfirmacaoExclusaoAberto}
@@ -102,6 +122,9 @@ export const GerenciarFuncionarios: React.FC = () => {
       <ModalFuncionario
         open={modalFuncionarioAberto}
         action={modalAction}
+        afterAction={() => {
+          handleDataChange();
+        }}
         onClose={() => {
           setModalFuncionarioAberto(false);
         }}

@@ -1,23 +1,38 @@
 import { Box, Button, Modal, Paper, TextField, useTheme } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { IPessoa } from '../../../shared/interfaces';
+import PessoasService from '../../../shared/services/api/pessoas/PessoasService';
 
 interface IModalEditarVeiculoProps {
   open: boolean;
   onClose: () => void;
   action: 'create' | 'edit';
+  afterAction: () => void;
   funcionario?: IPessoa;
 }
 
-// TODO funções que realizam escrita e edição no Banco de Dados, devem ser transportadas para PessoasService posteriormente.
-function adicionarFuncionario(nome: string, sobrenome: string, cpf: string, email: string) {
-  return;
+function adicionarFuncionario(nome: string, sobrenome: string, email: string, cpf: string) {
+  PessoasService.postFuncionario({
+    nome,
+    sobrenome,
+    email,
+    cpf,
+    senha: '',
+    is_funcionario: true,
+    is_admin: false,
+  });
 }
-function editarFuncionario(uuid: string, nome: string, sobrenome: string, cpf: string, email: string) {
+function editarFuncionario() {
   return;
 }
 
-export const ModalFuncionario: React.FC<IModalEditarVeiculoProps> = ({ open, onClose, action, funcionario }) => {
+export const ModalFuncionario: React.FC<IModalEditarVeiculoProps> = ({
+  open,
+  onClose,
+  action,
+  afterAction,
+  funcionario,
+}) => {
   const theme = useTheme();
 
   const [nome, setNome] = useState<string>('');
@@ -95,11 +110,13 @@ export const ModalFuncionario: React.FC<IModalEditarVeiculoProps> = ({ open, onC
               onClick={() => {
                 if (action === 'create') {
                   // TODO lógica de geração do UUID: banco ou local?
-                  adicionarFuncionario(nome, sobrenome, cpf, email);
+                  adicionarFuncionario(nome, sobrenome, email, cpf);
                 } else {
                   if (!funcionario) return;
-                  editarFuncionario(funcionario.uuid, nome, sobrenome, cpf, email);
+                  editarFuncionario();
                 }
+                afterAction();
+                onClose();
               }}
             >
               {action === 'create' ? 'Adicionar' : 'Editar'}

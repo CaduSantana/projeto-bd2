@@ -1,5 +1,5 @@
 import { AlertColor } from '@mui/material';
-import { createContext, useCallback, useContext, useState } from 'react';
+import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 
 interface ISolicitarDescarteContextData {
   produtosAdicionados: {
@@ -47,13 +47,13 @@ export const useSolicitarDescarteContext = () => {
 };
 
 export const SolicitarDescarteContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const loadProdutosAdicionados = () => {
+  function loadProdutosAdicionados() {
     const produtosAdicionados = localStorage.getItem('produtosAdicionados');
     if (produtosAdicionados) {
       return JSON.parse(produtosAdicionados);
     }
     return [];
-  };
+  }
 
   const [produtosAdicionados, setProdutosAdicionados] = useState<
     {
@@ -81,38 +81,50 @@ export const SolicitarDescarteContextProvider: React.FC<{ children: React.ReactN
     []
   );
 
-  return (
-    <SolicitarDescarteContext.Provider
-      value={{
-        produtosAdicionados: {
-          value: produtosAdicionados,
-          setValue: setSaveProdutosAdicionados,
+  const information: ISolicitarDescarteContextData = useMemo(
+    () => ({
+      produtosAdicionados: {
+        value: produtosAdicionados,
+        setValue: setSaveProdutosAdicionados,
+      },
+      modalNovoProdutoAberto: {
+        value: modalNovoProdutoAberto,
+        setValue: setModalNovoProdutoAberto,
+      },
+      modalEnderecoAberto: {
+        value: modalEnderecoAberto,
+        setValue: setModalEnderecoAberto,
+      },
+      snackbar: {
+        aberto: {
+          value: snackbarAberto,
+          setValue: setSnackbarAberto,
         },
-        modalNovoProdutoAberto: {
-          value: modalNovoProdutoAberto,
-          setValue: setModalNovoProdutoAberto,
+        mensagem: {
+          value: mensagemSnackbar,
+          setValue: setMensagemSnackbar,
         },
-        modalEnderecoAberto: {
-          value: modalEnderecoAberto,
-          setValue: setModalEnderecoAberto,
+        tipo: {
+          value: tipoAlertaSnackbar,
+          setValue: setTipoAlertaSnackbar,
         },
-        snackbar: {
-          aberto: {
-            value: snackbarAberto,
-            setValue: setSnackbarAberto,
-          },
-          mensagem: {
-            value: mensagemSnackbar,
-            setValue: setMensagemSnackbar,
-          },
-          tipo: {
-            value: tipoAlertaSnackbar,
-            setValue: setTipoAlertaSnackbar,
-          },
-        },
-      }}
-    >
-      {children}
-    </SolicitarDescarteContext.Provider>
+      },
+    }),
+    [
+      produtosAdicionados,
+      modalNovoProdutoAberto,
+      modalEnderecoAberto,
+      snackbarAberto,
+      mensagemSnackbar,
+      tipoAlertaSnackbar,
+      setSaveProdutosAdicionados,
+      setModalNovoProdutoAberto,
+      setModalEnderecoAberto,
+      setSnackbarAberto,
+      setMensagemSnackbar,
+      setTipoAlertaSnackbar,
+    ]
   );
+
+  return <SolicitarDescarteContext.Provider value={information}>{children}</SolicitarDescarteContext.Provider>;
 };
