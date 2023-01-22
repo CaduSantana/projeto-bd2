@@ -23,10 +23,10 @@ async function getAllFuncionarios() {
     return funcionarios.filter((funcionario) => funcionario.is_funcionario);
   }
 
-  return new Error('Não foi possível obter os funcionários.');
+  return Promise.reject('Não foi possível obter os funcionários');
 }
 
-async function postFuncionario(funcionario: FuncionarioPost): Promise<boolean> {
+async function postFuncionario(funcionario: FuncionarioPost) {
   const response = await fetch(`${Environment.URL_BASE}/pessoas`, {
     method: 'POST',
     headers: {
@@ -37,33 +37,27 @@ async function postFuncionario(funcionario: FuncionarioPost): Promise<boolean> {
   return response.status === 201;
 }
 
-export function getExemploSolicitante() {
-  return {
-    uuid: 'd7a667b6-be2d-459f-a8e9-f2ee0ae9adc2',
-    nome: 'Luiz Felipe',
-    sobrenome: 'Scolari',
-    cpf: '12345678901',
-    email: 'luizfelipescolari@cbf.com',
-    senha: 'khediratabelando',
-    is_funcionario: false,
-    is_admin: false,
-  } as IPessoa;
-}
+async function getPessoaByUUID(uuid: string) {
+  const response = await fetch(`${Environment.URL_BASE}/pessoas`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  const data: IPessoa[] = await response.json();
 
-export function getExemploFuncionario() {
-  return {
-    uuid: '014d5781-d601-4121-82d3-c1a4167755b8',
-    nome: 'Thomas',
-    sobrenome: 'Müller',
-    cpf: '13243546576',
-    email: 'thomasmuller@deutsch.com',
-    senha: 'raumdeuter',
-    is_funcionario: true,
-    is_admin: false,
-  } as IPessoa;
+  if (data) {
+    const pessoa = data.find((pessoa) => pessoa.uuid === uuid);
+    if (pessoa) {
+      return pessoa;
+    }
+  }
+
+  return Promise.reject('Não foi possível obter a pessoa');
 }
 
 export default {
   getAllFuncionarios,
   postFuncionario,
+  getPessoaByUUID,
 };
