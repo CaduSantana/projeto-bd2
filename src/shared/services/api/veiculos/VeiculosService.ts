@@ -7,7 +7,7 @@ interface VeiculoPost {
   capacidade: number;
 }
 
-async function getAllVeiculos(): Promise<IVeiculo[] | Error> {
+async function getAllVeiculos() {
   const response = await fetch(`${Environment.URL_BASE}/veiculos`, {
     method: 'GET',
     headers: {
@@ -19,10 +19,10 @@ async function getAllVeiculos(): Promise<IVeiculo[] | Error> {
     return veiculos;
   }
 
-  return new Error('Não foi possível obter os veículos');
+  return Promise.reject('Não foi possível obter os veículos');
 }
 
-async function postVeiculo(veiculo: VeiculoPost): Promise<boolean> {
+async function postVeiculo(veiculo: VeiculoPost) {
   const response = await fetch(`${Environment.URL_BASE}/veiculos`, {
     method: 'POST',
     headers: {
