@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ModalConfirmacao, Tabela } from '../../shared/components';
+import { AlertaFalha, ModalConfirmacao, Tabela } from '../../shared/components';
 import { LayoutBase } from '../../shared/layouts';
 import { IPessoa } from '../../shared/interfaces';
 import { BarraDePesquisa, ModalFuncionario } from './components';
 import PessoasService from '../../shared/services/api/pessoas/PessoasService';
+import { CircularProgress } from '@mui/material';
 
 export const GerenciarFuncionarios: React.FC = () => {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [loadingStatus, setLoadingStatus] = useState<'loading' | 'success' | 'fail'>('loading');
   const [funcionarios, setFuncionarios] = useState<IPessoa[]>([]);
 
   useEffect(() => {
@@ -14,18 +15,21 @@ export const GerenciarFuncionarios: React.FC = () => {
   }, []);
 
   function handleDataChange() {
-    setIsLoading(true);
+    setLoadingStatus('loading');
 
-    PessoasService.getAllFuncionarios().then((funcionarios) => {
-      setIsLoading(false);
+    PessoasService.getAllFuncionarios()
+      .then((funcionarios) => {
+        if (funcionarios instanceof Error) {
+          setLoadingStatus('fail');
+          return;
+        }
 
-      if (funcionarios instanceof Error) {
-        // TODO exibir mensagem de erro
-        return;
-      }
-
-      setFuncionarios(funcionarios);
-    });
+        setLoadingStatus('success');
+        setFuncionarios(funcionarios);
+      })
+      .catch(() => {
+        setLoadingStatus('fail');
+      });
   }
 
   function abrirModalCadastro() {
@@ -67,46 +71,50 @@ export const GerenciarFuncionarios: React.FC = () => {
         }}
       />
 
-      {!isLoading && <Tabela
-        columns={[
-          {
-            key: 'nome',
-            label: 'Nome completo',
-          },
-          {
-            key: 'cpf',
-            label: 'CPF',
-          },
-          {
-            key: 'email',
-            label: 'Email',
-          },
-        ]}
-        alignments={['left', 'left', 'left']}
-        data={tableData}
-        mapper={(funcionario) => {
-          const funcionarioValue = funcionario as IPessoa;
-          return [
-            `${funcionarioValue.nome} ${funcionarioValue.sobrenome}`,
-            funcionarioValue.cpf,
-            funcionarioValue.email,
-          ];
-        }}
-        actions={[
-          {
-            icon: 'edit',
-            onClick: function (funcionario) {
-              abrirModalEdicao(funcionario as IPessoa);
+      {loadingStatus === 'success' && (
+        <Tabela
+          columns={[
+            {
+              key: 'nome',
+              label: 'Nome completo',
             },
-          },
-          {
-            icon: 'delete',
-            onClick: function (funcionario) {
-              abrirModalExclusao(funcionario as IPessoa);
+            {
+              key: 'cpf',
+              label: 'CPF',
             },
-          },
-        ]}
-      />}
+            {
+              key: 'email',
+              label: 'Email',
+            },
+          ]}
+          alignments={['left', 'left', 'left']}
+          data={tableData}
+          mapper={(funcionario) => {
+            const funcionarioValue = funcionario as IPessoa;
+            return [
+              `${funcionarioValue.nome} ${funcionarioValue.sobrenome}`,
+              funcionarioValue.cpf,
+              funcionarioValue.email,
+            ];
+          }}
+          actions={[
+            {
+              icon: 'edit',
+              onClick: function (funcionario) {
+                abrirModalEdicao(funcionario as IPessoa);
+              },
+            },
+            {
+              icon: 'delete',
+              onClick: function (funcionario) {
+                abrirModalExclusao(funcionario as IPessoa);
+              },
+            },
+          ]}
+        />
+      )}
+      {loadingStatus === 'fail' && <AlertaFalha />}
+      {loadingStatus === 'loading' && <CircularProgress />}
 
       <ModalConfirmacao
         open={modalConfirmacaoExclusaoAberto}

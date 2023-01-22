@@ -1,12 +1,13 @@
-import { ModalConfirmacao, Tabela } from '../../shared/components';
+import { AlertaFalha, ModalConfirmacao, Tabela } from '../../shared/components';
 import { LayoutBase } from '../../shared/layouts';
 import { BarraDePesquisa, ModalVeiculo } from './components';
 import { IVeiculo } from '../../shared/interfaces';
 import { useEffect, useMemo, useState } from 'react';
 import VeiculosService from '../../shared/services/api/veiculos/VeiculosService';
+import { CircularProgress } from '@mui/material';
 
 export const GerenciarVeiculos: React.FC = () => {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [loadingStatus, setLoadingStatus] = useState<'loading' | 'success' | 'fail'>('loading');
   const [veiculos, setVeiculos] = useState<IVeiculo[]>([]);
 
   useEffect(() => {
@@ -14,18 +15,21 @@ export const GerenciarVeiculos: React.FC = () => {
   }, []);
 
   function handleDataChange() {
-    setIsLoading(true);
+    setLoadingStatus('loading');
 
-    VeiculosService.getAllVeiculos().then((veiculos) => {
-      setIsLoading(false);
+    VeiculosService.getAllVeiculos()
+      .then((veiculos) => {
+        if (veiculos instanceof Error) {
+          setLoadingStatus('fail');
+          return;
+        }
 
-      if (veiculos instanceof Error) {
-        // TODO exibir mensagem de erro
-        return;
-      }
-
-      setVeiculos(veiculos);
-    });
+        setLoadingStatus('success');
+        setVeiculos(veiculos);
+      })
+      .catch(() => {
+        setLoadingStatus('fail');
+      });
   }
 
   function abrirModalCadastro() {
@@ -62,7 +66,7 @@ export const GerenciarVeiculos: React.FC = () => {
   return (
     <LayoutBase title='Gerenciar veículos'>
       <BarraDePesquisa onAdicionar={abrirModalCadastro} />
-      {!isLoading && (
+      {loadingStatus === 'success' && (
         <Tabela
           columns={[
             {
@@ -100,6 +104,8 @@ export const GerenciarVeiculos: React.FC = () => {
           ]}
         />
       )}
+      {loadingStatus === 'fail' && <AlertaFalha />}
+      {loadingStatus === 'loading' && <CircularProgress />}
 
       <ModalConfirmacao
         open={modalConfirmacaoExclusaoAberto}
