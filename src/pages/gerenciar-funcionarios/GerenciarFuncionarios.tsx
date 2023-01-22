@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ModalConfirmacao, Tabela } from '../../shared/components';
 import { LayoutBase } from '../../shared/layouts';
 import { getExemploFuncionario, IPessoa } from '../../shared/services/api';
@@ -13,14 +13,14 @@ export const GerenciarFuncionarios: React.FC = () => {
     setModalFuncionarioAberto(true);
   }
 
-  function abrirModalEdicao(linhaIndex: number) {
-    setFuncionarioSelecionado(funcionarios[linhaIndex]);
+  function abrirModalEdicao(funcionario: IPessoa) {
+    setFuncionarioSelecionado(funcionario);
     setModalAction('edit');
     setModalFuncionarioAberto(true);
   }
 
-  function abrirModalExclusao(linhaIndex: number) {
-    setFuncionarioSelecionado(funcionarios[linhaIndex]);
+  function abrirModalExclusao(funcionario: IPessoa) {
+    setFuncionarioSelecionado(funcionario);
     setModalConfirmacaoExclusaoAberto(true);
   }
 
@@ -28,6 +28,15 @@ export const GerenciarFuncionarios: React.FC = () => {
   const [modalAction, setModalAction] = useState<'create' | 'edit'>('create');
   const [modalConfirmacaoExclusaoAberto, setModalConfirmacaoExclusaoAberto] = useState<boolean>(false);
   const [funcionarioSelecionado, setFuncionarioSelecionado] = useState<IPessoa>();
+
+  const tableData = useMemo(
+    () =>
+      funcionarios.map((funcionario) => ({
+        key: funcionario.uuid,
+        value: funcionario,
+      })),
+    [funcionarios]
+  );
 
   return (
     <LayoutBase title='Gerenciar funcionários'>
@@ -38,24 +47,41 @@ export const GerenciarFuncionarios: React.FC = () => {
       />
 
       <Tabela
-        cabecalho={['Nome completo', 'CPF', 'Email']}
-        alinhamentos={['left', 'left', 'right']}
-        linhas={funcionarios.map((funcionario) => [
-          `${funcionario.nome} ${funcionario.sobrenome}`,
-          funcionario.cpf,
-          funcionario.email,
-        ])}
-        acoes={[
+        columns={[
+          {
+            key: 'nome',
+            label: 'Nome completo',
+          },
+          {
+            key: 'cpf',
+            label: 'CPF',
+          },
+          {
+            key: 'email',
+            label: 'Email',
+          },
+        ]}
+        alignments={['left', 'left', 'left']}
+        data={tableData}
+        mapper={(funcionario) => {
+          const funcionarioValue = funcionario as IPessoa;
+          return [
+            `${funcionarioValue.nome} ${funcionarioValue.sobrenome}`,
+            funcionarioValue.cpf,
+            funcionarioValue.email,
+          ];
+        }}
+        actions={[
           {
             icon: 'edit',
-            funcao: (linhaIndex: number) => {
-              abrirModalEdicao(linhaIndex);
+            onClick: function (funcionario) {
+              abrirModalEdicao(funcionario as IPessoa);
             },
           },
           {
             icon: 'delete',
-            funcao: (linhaIndex: number) => {
-              abrirModalExclusao(linhaIndex);
+            onClick: function (funcionario) {
+              abrirModalExclusao(funcionario as IPessoa);
             },
           },
         ]}

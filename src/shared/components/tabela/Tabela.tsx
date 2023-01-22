@@ -13,27 +13,36 @@ import {
 import { useEffect } from 'react';
 
 interface ITabelaProps {
-  cabecalho: string[];
-  alinhamentos: ('center' | 'left' | 'right' | 'justify' | 'inherit' | undefined)[];
-  linhas: string[][];
-  acoes?: {
+  columns: {
+    key: string;
+    label: string;
+  }[];
+  alignments: ('center' | 'left' | 'right' | 'justify' | 'inherit' | undefined)[];
+  data: {
+    key: string;
+    value: unknown;
+  }[];
+  mapper: (data: unknown) => string[];
+  actions?: {
     icon: string;
-    funcao: (linhaIndex: number) => void;
+    onClick: (data: unknown) => void;
+    isAvailable?: (data: unknown) => boolean;
   }[];
   bgColor?: string;
 }
 
 export const Tabela: React.FC<ITabelaProps> = ({
-  cabecalho,
-  alinhamentos,
-  linhas,
-  acoes,
+  columns = [],
+  alignments = [],
+  data = [],
+  mapper = () => [],
+  actions = [],
   bgColor,
 }) => {
   const theme = useTheme();
 
   useEffect(() => {
-    bgColor = bgColor? bgColor : theme.palette.background.default;
+    bgColor = bgColor ? bgColor : theme.palette.background.default;
   }, [theme]);
 
   return (
@@ -41,29 +50,38 @@ export const Tabela: React.FC<ITabelaProps> = ({
       <Table bgcolor={bgColor}>
         <TableHead>
           <TableRow>
-            {cabecalho.map((cabecalho, index) => (
-              <TableCell key={index} align={alinhamentos[index]}>
-                {cabecalho}
+            {columns.map(({ key, label }, index) => (
+              <TableCell key={key} align={alignments[index]}>
+                {label}
               </TableCell>
             ))}
-            {acoes && <TableCell align='right'>Ações</TableCell>}
+            {actions && <TableCell align='right'>Ações</TableCell>}
           </TableRow>
         </TableHead>
         <TableBody>
-          {linhas.map((linha, linhaIndex) => (
-            <TableRow key={linhaIndex}>
-              {linha.map((celula, index) => (
-                <TableCell key={index} align={alinhamentos[index]}>
-                  {celula}
+          {data.map(({ key: rowKey, value: rowValue }) => (
+            <TableRow key={rowKey}>
+              {mapper(rowValue).map((columnString, columnIndex) => (
+                <TableCell key={`${rowKey},${columns[columnIndex].key}`} align={alignments[columnIndex]}>
+                  {columnString}
                 </TableCell>
               ))}
-              {acoes && (
+              {actions && (
                 <TableCell align='right'>
-                  {acoes.map((acao, index) => (
-                    <IconButton key={index} onClick={() => acao.funcao(linhaIndex)}>
-                      <Icon>{acao.icon}</Icon>
-                    </IconButton>
-                  ))}
+                  {actions.map((action) => {
+                    if (action.isAvailable && !action.isAvailable(rowValue)) {
+                      return null;
+                    }
+                    return (
+                      <IconButton
+                        key={`${rowKey},${action.icon}`}
+                        onClick={() => action.onClick(rowValue)}
+                        size='small'
+                      >
+                        <Icon>{action.icon}</Icon>
+                      </IconButton>
+                    );
+                  })}
                 </TableCell>
               )}
             </TableRow>

@@ -1,19 +1,19 @@
 import { Button, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
 import { useMemo, useState } from 'react';
 import { ModalWrapper, Tabela } from '../../../shared/components';
-import { getExemploFuncionario, getExemploVeiculo } from '../../../shared/services/api';
+import { getExemploFuncionario, getExemploVeiculo, IPessoa, IVeiculo } from '../../../shared/services/api';
 import { useExecutarDescarteContext } from '../ExecutarDescarteContext';
 
 const TabelaFuncionariosDisponiveis: React.FC = () => {
   const funcionarios = [getExemploFuncionario()];
   const { funcionariosSelecionados } = useExecutarDescarteContext();
-  const linhasTabela = useMemo(
+
+  const tableData = useMemo(
     () =>
-      funcionarios.map((funcionario) => [
-        `${funcionario.nome} ${funcionario.sobrenome}`,
-        funcionario.cpf,
-        funcionario.email,
-      ]),
+      funcionarios.map((funcionario) => ({
+        key: funcionario.uuid,
+        value: funcionario,
+      })),
     [funcionarios]
   );
 
@@ -21,14 +21,35 @@ const TabelaFuncionariosDisponiveis: React.FC = () => {
     <>
       <Typography variant='h5'>Funcionários</Typography>
       <Tabela
-        cabecalho={['Nome completo', 'CPF', 'Email']}
-        alinhamentos={['left', 'left', 'right']}
-        linhas={linhasTabela}
-        acoes={[
+        columns={[
+          {
+            key: 'nome',
+            label: 'Nome completo',
+          },
+          {
+            key: 'cpf',
+            label: 'CPF',
+          },
+          {
+            key: 'email',
+            label: 'Email',
+          },
+        ]}
+        alignments={['left', 'left', 'left']}
+        data={tableData}
+        mapper={(funcionario) => {
+          const funcionarioValue = funcionario as IPessoa;
+          return [
+            `${funcionarioValue.nome} ${funcionarioValue.sobrenome}`,
+            funcionarioValue.cpf,
+            funcionarioValue.email,
+          ];
+        }}
+        actions={[
           {
             icon: 'add',
-            funcao: (linhaIndex: number) => {
-              funcionariosSelecionados.addFuncionario(funcionarios[linhaIndex]);
+            onClick: function (funcionario) {
+              funcionariosSelecionados.addFuncionario(funcionario as IPessoa);
             },
           },
         ]}
@@ -38,17 +59,14 @@ const TabelaFuncionariosDisponiveis: React.FC = () => {
 };
 
 const ListaFuncionariosSelecionados: React.FC = () => {
-  const funcionarios = [getExemploFuncionario()];
-
   const { funcionariosSelecionados, modalSelecionarVeiculo } = useExecutarDescarteContext();
-  const linhasTabela = useMemo(
+
+  const tableData = useMemo(
     () =>
-      funcionariosSelecionados.value.map(({ funcionario, veiculoUtilizado }) => [
-        `${funcionario.nome} ${funcionario.sobrenome}`,
-        funcionario.cpf,
-        funcionario.email,
-        veiculoUtilizado ? veiculoUtilizado.placa : 'Não selecionado',
-      ]),
+      funcionariosSelecionados.value.map(({ funcionario, veiculoUtilizado }) => ({
+        key: funcionario.uuid,
+        value: { funcionario, veiculoUtilizado },
+      })),
     [funcionariosSelecionados.value]
   );
 
@@ -56,20 +74,48 @@ const ListaFuncionariosSelecionados: React.FC = () => {
     <>
       <Typography variant='h5'>Funcionários selecionados</Typography>
       <Tabela
-        cabecalho={['Nome completo', 'CPF', 'Email', 'Veículo utilizado']}
-        alinhamentos={['left', 'left', 'right']}
-        linhas={linhasTabela}
-        acoes={[
+        columns={[
+          {
+            key: 'nome',
+            label: 'Nome completo',
+          },
+          {
+            key: 'cpf',
+            label: 'CPF',
+          },
+          {
+            key: 'email',
+            label: 'Email',
+          },
+          {
+            key: 'veiculo-utilizado',
+            label: 'Veículo utilizado',
+          },
+        ]}
+        alignments={['left', 'left', 'left', 'left']}
+        data={tableData}
+        mapper={(data) => {
+          const { funcionario, veiculoUtilizado } = data as { funcionario: IPessoa; veiculoUtilizado: IVeiculo };
+          return [
+            `${funcionario.nome} ${funcionario.sobrenome}`,
+            funcionario.cpf,
+            funcionario.email,
+            veiculoUtilizado ? veiculoUtilizado.placa : 'Nenhum veículo selecionado',
+          ];
+        }}
+        actions={[
           {
             icon: 'delete',
-            funcao: (linhaIndex: number) => {
-              funcionariosSelecionados.removeFuncionario(funcionarios[linhaIndex]);
+            onClick: function (data) {
+              const { funcionario } = data as { funcionario: IPessoa; veiculoUtilizado: IVeiculo };
+              funcionariosSelecionados.removeFuncionario(funcionario);
             },
           },
           {
             icon: 'local_shipping',
-            funcao: (linhaIndex: number) => {
-              modalSelecionarVeiculo.setFuncionario(funcionarios[linhaIndex]);
+            onClick: function (data) {
+              const { funcionario } = data as { funcionario: IPessoa; veiculoUtilizado: IVeiculo };
+              modalSelecionarVeiculo.setFuncionario(funcionario);
               modalSelecionarVeiculo.setOpen(true);
             },
           },

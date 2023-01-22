@@ -1,5 +1,5 @@
 import { MapaLeaflet, IMapaLeafletProps, ModalWrapper, Tabela } from '../../../shared/components';
-import { getExemploDescarte } from '../../../shared/services/api';
+import { getExemploDescarte, IDescarte } from '../../../shared/services/api';
 import { formatDate } from '../../../shared/services';
 import { useExecutarDescarteContext } from '../ExecutarDescarteContext';
 import { useMemo, useState } from 'react';
@@ -27,40 +27,67 @@ export const TabelaDescartes = () => {
   const [modalMapaLeafletAberto, setModalMapaLeafletAberto] = useState(false);
   const [latLngMapaLeaflet, setLatLngMapaLeaflet] = useState<[number, number]>([0, 0]);
 
-  const linhasTabela: string[][] = useMemo(
+  const tableData = useMemo(
     () =>
-      descartes.map((descarte) => [
-        `${descarte.solicitante.nome} ${descarte.solicitante.sobrenome}`,
-        formatDate(descarte.solicitadoEm),
-        descarte.produtosDescartados
-          .map((itemProduto) => `${itemProduto.produto.nome} (${itemProduto.quantidade})`)
-          .join(', '),
-        `${descarte.origem.rua}, ${descarte.origem.numero} - ${descarte.origem.bairro}`,
-      ]),
+      descartes.map((descarte) => ({
+        key: descarte.uuid,
+        value: descarte,
+      })),
     [descartes]
   );
 
   return (
     <>
       <Tabela
-        cabecalho={['Solicitado por', 'Momento da solicitação', 'Itens descartados', 'Local de origem']}
-        alinhamentos={['left', 'left', 'center', 'left']}
-        linhas={linhasTabela}
-        acoes={[
+        columns={[
+          {
+            key: 'solicitante',
+            label: 'Solicitado por',
+          },
+          {
+            key: 'momento',
+            label: 'Momento da solicitação',
+          },
+          {
+            key: 'itens',
+            label: 'Itens descartados',
+          },
+          {
+            key: 'origem',
+            label: 'Local de origem',
+          },
+        ]}
+        alignments={['left', 'left', 'center', 'left']}
+        data={tableData}
+        mapper={(descarte) => {
+          const descarteValue = descarte as IDescarte;
+          return [
+            `${descarteValue.solicitante.nome} ${descarteValue.solicitante.sobrenome}`,
+            formatDate(descarteValue.solicitadoEm),
+            descarteValue.produtosDescartados
+              .map(({ produto, quantidade }) => `${produto.nome} (${quantidade})`)
+              .join(', '),
+            `${descarteValue.origem.rua} - ${descarteValue.origem.numero} - ${descarteValue.origem.bairro}`,
+          ];
+        }}
+        actions={[
           {
             icon: 'map',
-            funcao: (linhaIndex) => {
-              setLatLngMapaLeaflet([
-                descartes[linhaIndex].origem.coordinates?.lat ?? 0,
-                descartes[linhaIndex].origem.coordinates?.long ?? 0,
-              ]);
-              setModalMapaLeafletAberto(true);
+            onClick: function (descarte) {
+              const descarteValue = descarte as IDescarte;
+              if (descarteValue.origem.coordinates) {
+                setLatLngMapaLeaflet([descarteValue.origem.coordinates.lat, descarteValue.origem.coordinates.long]);
+                setModalMapaLeafletAberto(true);
+              }
+            },
+            isAvailable: function (descarte) {
+              return !!(descarte as IDescarte).origem.coordinates;
             },
           },
           {
             icon: 'auto_delete',
-            funcao: (linhaIndex) => {
-              descarteSolicitado.setValue(descartes[linhaIndex]);
+            onClick: function (descarte) {
+              descarteSolicitado.setValue(descarte as IDescarte);
               modalRealizarDescarte.setOpen(true);
             },
           },
