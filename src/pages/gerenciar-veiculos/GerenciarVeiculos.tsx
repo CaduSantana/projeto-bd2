@@ -65,44 +65,46 @@ export const GerenciarVeiculos: React.FC = () => {
 
   return (
     <LayoutBase title='Gerenciar veículos'>
-      <BarraDePesquisa onAdicionar={abrirModalCadastro} />
       {loadingStatus === 'success' && (
-        <Tabela
-          columns={[
-            {
-              key: 'placa',
-              label: 'Placa',
-            },
-            {
-              key: 'tipo',
-              label: 'Tipo',
-            },
-            {
-              key: 'capacidade',
-              label: 'Capacidade (kg)',
-            },
-          ]}
-          alignments={['left', 'left', 'right']}
-          data={tableData}
-          mapper={(veiculo) => {
-            const veiculoValue = veiculo as IVeiculo;
-            return [veiculoValue.placa, veiculoValue.tipo, veiculoValue.capacidade.toString()];
-          }}
-          actions={[
-            {
-              icon: 'edit',
-              onClick: function (veiculo) {
-                abrirModalEdicao(veiculo as IVeiculo);
+        <>
+          <BarraDePesquisa onAdicionar={abrirModalCadastro} />
+          <Tabela
+            columns={[
+              {
+                key: 'placa',
+                label: 'Placa',
               },
-            },
-            {
-              icon: 'delete',
-              onClick: function (veiculo) {
-                abrirModalExclusao(veiculo as IVeiculo);
+              {
+                key: 'tipo',
+                label: 'Tipo',
               },
-            },
-          ]}
-        />
+              {
+                key: 'capacidade',
+                label: 'Capacidade (kg)',
+              },
+            ]}
+            alignments={['left', 'left', 'right']}
+            data={tableData}
+            mapper={(veiculo) => {
+              const veiculoValue = veiculo as IVeiculo;
+              return [veiculoValue.placa, veiculoValue.tipo, veiculoValue.capacidade.toString()];
+            }}
+            actions={[
+              {
+                icon: 'edit',
+                onClick: function (veiculo) {
+                  abrirModalEdicao(veiculo as IVeiculo);
+                },
+              },
+              {
+                icon: 'delete',
+                onClick: function (veiculo) {
+                  abrirModalExclusao(veiculo as IVeiculo);
+                },
+              },
+            ]}
+          />
+        </>
       )}
       {loadingStatus === 'fail' && <AlertaFalha />}
       {loadingStatus === 'loading' && <CircularProgress />}

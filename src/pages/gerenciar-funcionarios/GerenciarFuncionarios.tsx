@@ -65,53 +65,54 @@ export const GerenciarFuncionarios: React.FC = () => {
 
   return (
     <LayoutBase title='Gerenciar funcionários'>
-      <BarraDePesquisa
-        onAdicionar={() => {
-          abrirModalCadastro();
-        }}
-      />
-
       {loadingStatus === 'success' && (
-        <Tabela
-          columns={[
-            {
-              key: 'nome',
-              label: 'Nome completo',
-            },
-            {
-              key: 'cpf',
-              label: 'CPF',
-            },
-            {
-              key: 'email',
-              label: 'Email',
-            },
-          ]}
-          alignments={['left', 'left', 'left']}
-          data={tableData}
-          mapper={(funcionario) => {
-            const funcionarioValue = funcionario as IPessoa;
-            return [
-              `${funcionarioValue.nome} ${funcionarioValue.sobrenome}`,
-              funcionarioValue.cpf,
-              funcionarioValue.email,
-            ];
-          }}
-          actions={[
-            {
-              icon: 'edit',
-              onClick: function (funcionario) {
-                abrirModalEdicao(funcionario as IPessoa);
+        <>
+          <BarraDePesquisa
+            onAdicionar={() => {
+              abrirModalCadastro();
+            }}
+          />
+          <Tabela
+            columns={[
+              {
+                key: 'nome',
+                label: 'Nome completo',
               },
-            },
-            {
-              icon: 'delete',
-              onClick: function (funcionario) {
-                abrirModalExclusao(funcionario as IPessoa);
+              {
+                key: 'cpf',
+                label: 'CPF',
               },
-            },
-          ]}
-        />
+              {
+                key: 'email',
+                label: 'Email',
+              },
+            ]}
+            alignments={['left', 'left', 'left']}
+            data={tableData}
+            mapper={(funcionario) => {
+              const funcionarioValue = funcionario as IPessoa;
+              return [
+                `${funcionarioValue.nome} ${funcionarioValue.sobrenome}`,
+                funcionarioValue.cpf,
+                funcionarioValue.email,
+              ];
+            }}
+            actions={[
+              {
+                icon: 'edit',
+                onClick: function (funcionario) {
+                  abrirModalEdicao(funcionario as IPessoa);
+                },
+              },
+              {
+                icon: 'delete',
+                onClick: function (funcionario) {
+                  abrirModalExclusao(funcionario as IPessoa);
+                },
+              },
+            ]}
+          />
+        </>
       )}
       {loadingStatus === 'fail' && <AlertaFalha />}
       {loadingStatus === 'loading' && <CircularProgress />}
