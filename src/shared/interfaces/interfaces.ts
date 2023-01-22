@@ -15,7 +15,7 @@ export interface IDescarte {
 }
 
 export interface IUF {
-  id: number;
+  id_uf: number;
   nome: string;
   sigla: string;
 }

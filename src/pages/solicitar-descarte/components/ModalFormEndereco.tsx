@@ -1,23 +1,60 @@
 import { Box, Button, MenuItem, Modal, Paper, Select, TextField, useTheme } from '@mui/material';
-import { useState } from 'react';
-import { getExemploMunicipio, getExemploUF } from '../../../shared/services/api';
+import { useEffect, useState } from 'react';
+import { IMunicipio, IUF } from '../../../shared/interfaces';
+import EnderecosService from '../../../shared/services/api/enderecos/EnderecosService';
 import { useSolicitarDescarteContext } from '../SolicitarDescarteContext';
+
+interface EnderecoIn {
+  rua: string;
+  numero: number;
+  complemento: string;
+  bairro: string;
+  cep: string;
+  uuid_pessoa: string;
+  municipiosId_municipio: number;
+}
 
 export const ModalFormEndereco: React.FC = () => {
   const theme = useTheme();
 
-  const listaDeUFs = [getExemploUF()];
-  const listaDeMunicipios = [getExemploMunicipio()];
-
-  const { modalEnderecoAberto, snackbar } = useSolicitarDescarteContext();
-  const [ufId, setUfId] = useState<number>(1);
-  const [cidadeId, setCidadeId] = useState<number>(1);
+  // Estados de carregamento de dados
+  const [ufs, setUfs] = useState<IUF[]>([]);
+  const [municipios, setMunicipios] = useState<IMunicipio[]>([]);
+  // Estados do formulário
+  const [ufIdSelecionada, setUfIdSelecionada] = useState<number>(1);
+  const [municipioIdSelecionada, setMunicipioIdSelecionada] = useState<number>(1);
   const [rua, setRua] = useState<string>('');
   const [numero, setNumero] = useState<string>('');
   const [bairro, setBairro] = useState<string>('');
   const [cep, setCep] = useState<string>('');
   const [complemento, setComplemento] = useState<string>('');
+  // Estados do context
+  const { modalEnderecoAberto, snackbar } = useSolicitarDescarteContext();
 
+  // Carrega todas as UFs
+  useEffect(() => {
+    EnderecosService.getAllUfs().then((ufs) => {
+      if (ufs instanceof Error) {
+        return;
+      }
+
+      setUfs(ufs);
+      setUfIdSelecionada(ufs[0].id_uf);
+    });
+  }, []);
+
+  // Atualiza municipios sempre que a UF selecionada mudar
+  useEffect(() => {
+    EnderecosService.getAllMunicipiosByUfId(ufIdSelecionada).then((municipios) => {
+      if (municipios instanceof Error) {
+        return;
+      }
+
+      setMunicipios(municipios);
+    });
+  }, [ufIdSelecionada]);
+
+  // Tamanhos máximos de campos
   const TAMANHO_MAXIMO_RUA = 45;
   const TAMANHO_MAXIMO_NUMERO = 5;
   const TAMANHO_MAXIMO_BAIRRO = 45;
@@ -42,33 +79,31 @@ export const ModalFormEndereco: React.FC = () => {
         <Box display='flex' flexDirection='column' gap={2} component='form'>
           <Box display='flex' flexDirection='row' gap={2}>
             <Select
-              value={ufId}
+              value={ufIdSelecionada}
               onChange={(e) => {
-                setUfId(e.target.value as number);
+                setUfIdSelecionada(e.target.value as number);
               }}
               fullWidth
             >
-              {listaDeUFs.map((uf) => (
-                <MenuItem key={uf.id} value={uf.id}>
+              {ufs.map((uf) => (
+                <MenuItem key={uf.id_uf} value={uf.id_uf}>
                   {uf.nome}
                 </MenuItem>
               ))}
             </Select>
 
             <Select
-              value={cidadeId}
+              value={municipioIdSelecionada}
               onChange={(e) => {
-                setCidadeId(e.target.value as number);
+                setMunicipioIdSelecionada(e.target.value as number);
               }}
               fullWidth
             >
-              {listaDeMunicipios
-                .filter((municipio) => municipio.uf.id === ufId)
-                .map((municipio) => (
-                  <MenuItem key={municipio.id} value={municipio.id}>
-                    {municipio.nome}
-                  </MenuItem>
-                ))}
+              {municipios.map((municipio) => (
+                <MenuItem key={municipio.id} value={municipio.id}>
+                  {municipio.nome}
+                </MenuItem>
+              ))}
             </Select>
           </Box>
           <Box display='flex' flexDirection='row' gap={2}>
