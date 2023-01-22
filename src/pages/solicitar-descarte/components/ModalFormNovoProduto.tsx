@@ -1,7 +1,8 @@
 import { Box, Button, Modal, Paper, TextField, useTheme } from '@mui/material';
 import { useState } from 'react';
 import { AutoCompleteComboBox } from '../../../shared/components';
-import { getExemploCategoria, ICategoriaProduto } from '../../../shared/services/api';
+import { ICategoriaProduto } from '../../../shared/interfaces';
+import { getExemploCategoria } from '../../../shared/services/api';
 import { useSolicitarDescarteContext } from '../SolicitarDescarteContext';
 
 export const ModalFormNovoProduto: React.FC = () => {

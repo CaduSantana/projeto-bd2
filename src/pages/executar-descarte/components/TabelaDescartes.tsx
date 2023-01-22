@@ -1,8 +1,9 @@
 import { MapaLeaflet, IMapaLeafletProps, ModalWrapper, Tabela } from '../../../shared/components';
-import { getExemploDescarte, IDescarte } from '../../../shared/services/api';
-import { formatDate } from '../../../shared/services';
+import { getExemploDescarte } from '../../../shared/services/api';
+import { IDescarte } from '../../../shared/interfaces';
 import { useExecutarDescarteContext } from '../ExecutarDescarteContext';
 import { useMemo, useState } from 'react';
+import { formatDate } from '../../../shared/services';
 
 type ModalMapaLeaftletProps = {
   open: boolean;

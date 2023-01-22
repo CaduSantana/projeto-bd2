@@ -1,6 +1,7 @@
 import { Autocomplete, Box, Button, Icon, Paper, TextField, useTheme } from '@mui/material';
 import { useState } from 'react';
-import { getExemploProduto, IProduto } from '../../../shared/services/api';
+import { IProduto } from '../../../shared/interfaces';
+import { getExemploProduto } from '../../../shared/services/api';
 import { useSolicitarDescarteContext } from '../SolicitarDescarteContext';
 
 export const BarraSelecaoProdutos: React.FC = () => {

@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
 import { ModalConfirmacao, Tabela } from '../../shared/components';
 import { LayoutBase } from '../../shared/layouts';
-import { getExemploFuncionario, IPessoa } from '../../shared/services/api';
+import { IPessoa } from '../../shared/interfaces';
+import { getExemploFuncionario } from '../../shared/services/api';
 import { BarraDePesquisa, ModalFuncionario } from './components';
 
 export const GerenciarFuncionarios: React.FC = () => {

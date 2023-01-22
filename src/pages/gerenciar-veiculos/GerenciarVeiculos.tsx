@@ -1,11 +1,32 @@
 import { ModalConfirmacao, Tabela } from '../../shared/components';
 import { LayoutBase } from '../../shared/layouts';
 import { BarraDePesquisa, ModalVeiculo } from './components';
-import { getExemploVeiculo, IVeiculo } from '../../shared/services/api';
-import { useMemo, useState } from 'react';
+import { IVeiculo } from '../../shared/interfaces';
+import { useEffect, useMemo, useState } from 'react';
+import VeiculosService from '../../shared/services/api/veiculos/VeiculosService';
 
 export const GerenciarVeiculos: React.FC = () => {
-  const veiculos: IVeiculo[] = [getExemploVeiculo()];
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [veiculos, setVeiculos] = useState<IVeiculo[]>([]);
+
+  useEffect(() => {
+    handleDataChange();
+  }, []);
+
+  function handleDataChange() {
+    setIsLoading(true);
+
+    VeiculosService.getAllVeiculos().then((veiculos) => {
+      setIsLoading(false);
+
+      if (veiculos instanceof Error) {
+        // TODO exibir mensagem de erro
+        return;
+      }
+
+      setVeiculos(veiculos);
+    });
+  }
 
   function abrirModalCadastro() {
     setVeiculoSelecionado(undefined);
@@ -41,42 +62,44 @@ export const GerenciarVeiculos: React.FC = () => {
   return (
     <LayoutBase title='Gerenciar veículos'>
       <BarraDePesquisa onAdicionar={abrirModalCadastro} />
-      <Tabela
-        columns={[
-          {
-            key: 'placa',
-            label: 'Placa',
-          },
-          {
-            key: 'tipo',
-            label: 'Tipo',
-          },
-          {
-            key: 'capacidade',
-            label: 'Capacidade (kg)',
-          },
-        ]}
-        alignments={['left', 'left', 'right']}
-        data={tableData}
-        mapper={(veiculo) => {
-          const veiculoValue = veiculo as IVeiculo;
-          return [veiculoValue.placa, veiculoValue.tipo, veiculoValue.capacidade.toString()];
-        }}
-        actions={[
-          {
-            icon: 'edit',
-            onClick: function (veiculo) {
-              abrirModalEdicao(veiculo as IVeiculo);
+      {!isLoading && (
+        <Tabela
+          columns={[
+            {
+              key: 'placa',
+              label: 'Placa',
             },
-          },
-          {
-            icon: 'delete',
-            onClick: function (veiculo) {
-              abrirModalExclusao(veiculo as IVeiculo);
+            {
+              key: 'tipo',
+              label: 'Tipo',
             },
-          },
-        ]}
-      />
+            {
+              key: 'capacidade',
+              label: 'Capacidade (kg)',
+            },
+          ]}
+          alignments={['left', 'left', 'right']}
+          data={tableData}
+          mapper={(veiculo) => {
+            const veiculoValue = veiculo as IVeiculo;
+            return [veiculoValue.placa, veiculoValue.tipo, veiculoValue.capacidade.toString()];
+          }}
+          actions={[
+            {
+              icon: 'edit',
+              onClick: function (veiculo) {
+                abrirModalEdicao(veiculo as IVeiculo);
+              },
+            },
+            {
+              icon: 'delete',
+              onClick: function (veiculo) {
+                abrirModalExclusao(veiculo as IVeiculo);
+              },
+            },
+          ]}
+        />
+      )}
 
       <ModalConfirmacao
         open={modalConfirmacaoExclusaoAberto}
@@ -96,6 +119,9 @@ export const GerenciarVeiculos: React.FC = () => {
           setModalVeiculoAberto(false);
         }}
         action={modalAction}
+        onAction={() => {
+          handleDataChange();
+        }}
       />
     </LayoutBase>
   );

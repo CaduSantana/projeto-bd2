@@ -1,31 +1,19 @@
-export interface ICategoriaProduto {
-  id: number,
-  nome: string,
-  prioridade: number,
-}
-
-export interface IProduto {
-  uuid: string,
-  nome: string,
-  descricao: string,
-  massa?: number,
-  categoria: ICategoriaProduto,
-}
+import { ICategoriaProduto, IProduto } from '../../../interfaces/interfaces';
 
 export function getExemploCategoria() {
-  return ({
+  return {
     id: 1,
     nome: 'Abstrato',
     prioridade: 1,
-  } as ICategoriaProduto);
+  } as ICategoriaProduto;
 }
 
 export function getExemploProduto() {
-  return ({
+  return {
     uuid: '8053dcd9-8b50-4ef4-b938-abbe432709c8',
     nome: 'Dignidade da Seleção Brasileira',
     descricao: 'Acabou',
     massa: 100,
     categoria: getExemploCategoria(),
-  } as IProduto);
+  } as IProduto;
 }

@@ -1,6 +1,6 @@
 import { Box, Button, Modal, Paper, TextField, useTheme } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { IPessoa } from '../../../shared/services/api';
+import { IPessoa } from '../../../shared/interfaces';
 
 interface IModalEditarVeiculoProps {
   open: boolean;

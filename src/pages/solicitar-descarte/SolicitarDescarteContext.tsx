@@ -54,7 +54,7 @@ export const SolicitarDescarteContextProvider: React.FC<{ children: React.ReactN
     }
     return [];
   };
-  
+
   const [produtosAdicionados, setProdutosAdicionados] = useState<
     {
       uuid: string;

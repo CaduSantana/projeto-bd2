@@ -1,16 +1,7 @@
-export interface IPessoa {
-  uuid: string;
-  nome: string;
-  sobrenome: string;
-  cpf: string;
-  email: string;
-  senha: string;
-  isFuncionario: boolean;
-  isAdmin: boolean;
-}
+import { IPessoa } from '../../../interfaces/interfaces';
 
 export function getExemploSolicitante() {
-  return ({
+  return {
     uuid: 'd7a667b6-be2d-459f-a8e9-f2ee0ae9adc2',
     nome: 'Luiz Felipe',
     sobrenome: 'Scolari',
@@ -19,11 +10,11 @@ export function getExemploSolicitante() {
     senha: 'khediratabelando',
     isFuncionario: false,
     isAdmin: false,
-  } as IPessoa);
+  } as IPessoa;
 }
 
 export function getExemploFuncionario() {
-  return ({
+  return {
     uuid: '014d5781-d601-4121-82d3-c1a4167755b8',
     nome: 'Thomas',
     sobrenome: 'Müller',
@@ -32,5 +23,5 @@ export function getExemploFuncionario() {
     senha: 'raumdeuter',
     isFuncionario: true,
     isAdmin: false,
-  } as IPessoa);
+  } as IPessoa;
 }

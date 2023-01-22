@@ -1,7 +1,8 @@
 import { Button, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
 import { useMemo, useState } from 'react';
 import { ModalWrapper, Tabela } from '../../../shared/components';
-import { getExemploFuncionario, getExemploVeiculo, IPessoa, IVeiculo } from '../../../shared/services/api';
+import { IPessoa, IVeiculo } from '../../../shared/interfaces';
+import { getExemploFuncionario, getExemploVeiculo } from '../../../shared/services/api';
 import { useExecutarDescarteContext } from '../ExecutarDescarteContext';
 
 const TabelaFuncionariosDisponiveis: React.FC = () => {

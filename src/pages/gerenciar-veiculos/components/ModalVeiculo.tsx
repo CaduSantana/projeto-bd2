@@ -1,23 +1,25 @@
 import { Box, Button, Modal, Paper, TextField, useTheme } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { IVeiculo } from '../../../shared/services/api';
+import { IVeiculo } from '../../../shared/interfaces';
+import VeiculosService from '../../../shared/services/api/veiculos/VeiculosService';
 
 interface IModalEditarVeiculoProps {
   open: boolean;
   onClose: () => void;
   action: 'create' | 'edit';
+  onAction: () => void;
   veiculo?: IVeiculo;
 }
 
 // TODO funções que realizam escrita e edição no Banco de Dados, devem ser transportadas para VeiculosService posteriormente.
-function adicionarVeiculo(veiculo: IVeiculo) {
-  return;
+function adicionarVeiculo(placa: string, tipo: string, capacidade: number) {
+  VeiculosService.postVeiculo({ placa, tipo, capacidade });
 }
-function editarVeiculo(veiculo: IVeiculo) {
+function editarVeiculo() {
   return;
 }
 
-export const ModalVeiculo: React.FC<IModalEditarVeiculoProps> = ({ open, onClose, action, veiculo }) => {
+export const ModalVeiculo: React.FC<IModalEditarVeiculoProps> = ({ open, onClose, action, onAction, veiculo }) => {
   const theme = useTheme();
 
   const [placa, setPlaca] = useState<string>('');
@@ -85,13 +87,13 @@ export const ModalVeiculo: React.FC<IModalEditarVeiculoProps> = ({ open, onClose
               variant='contained'
               onClick={() => {
                 if (action === 'create') {
-                  // TODO lógica de geração do UUID: banco ou local?
-                  const uuid = '';
-                  adicionarVeiculo({ uuid, placa, tipo, capacidade });
+                  adicionarVeiculo(placa, tipo, capacidade);
                 } else {
                   if (!veiculo) return;
-                  editarVeiculo({ uuid: veiculo.uuid, placa, tipo, capacidade });
+                  editarVeiculo();
                 }
+                onAction();
+                onClose();
               }}
             >
               {action === 'create' ? 'Adicionar' : 'Editar'}

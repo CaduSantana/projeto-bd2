@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
-import { IDescarte, IPessoa, IVeiculo } from '../../shared/services/api';
+import { IDescarte, IPessoa, IVeiculo } from '../../shared/interfaces';
 
 interface FuncionarioVeiculo {
   funcionario: IPessoa;
