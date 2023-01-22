@@ -13,21 +13,18 @@ export const LayoutBase: React.FC<ILayoutBaseProps> = ({ title, children }) => {
   const { toggleDrawerOpen } = useDrawerContext();
 
   return (
-    <Box height="100%" display="flex" flexDirection="column" gap={1}>
-      <Box padding={1} height={theme.spacing(12)} display="flex" alignItems="center" gap={1}>
-        {smDown ?
-          (<IconButton onClick={toggleDrawerOpen}>
+    <Box height='100vh' display='flex' flexDirection='column' gap={1}>
+      <Box padding={1} height={theme.spacing(12)} display='flex' alignItems='center' gap={1}>
+        {smDown ? (
+          <IconButton onClick={toggleDrawerOpen}>
             <Icon>menu</Icon>
-          </IconButton>) : undefined}
+          </IconButton>
+        ) : undefined}
 
-        <Typography variant='h5'>
-          {title}
-        </Typography>
+        <Typography variant='h5'>{title}</Typography>
       </Box>
 
-      <Box
-      display='flex' flexDirection='column' gap={1}
-      marginX={2}>
+      <Box display='flex' flexDirection='column' gap={1} marginX={2} overflow='scroll' marginBottom={1}>
         {children}
       </Box>
     </Box>
