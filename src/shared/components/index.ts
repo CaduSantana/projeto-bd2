@@ -7,3 +7,6 @@ export * from './modal-confirmacao/ModalConfirmacao';
 export * from './modal-wrapper/ModalWrapper';
 export * from './mapa-leaflet/MapaLeaflet';
 export * from './alerta-falha/AlertaFalha';
+export * from './modal-endereco/ModalEndereco';
+export * from './dialog-opcoes/DialogOpcoes';
+export * from './mapa-interativo-leaflet/MapaInterativoLeaflet';
