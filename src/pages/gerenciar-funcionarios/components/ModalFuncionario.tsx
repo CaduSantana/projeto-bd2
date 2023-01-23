@@ -22,8 +22,8 @@ function adicionarFuncionario(nome: string, sobrenome: string, email: string, cp
     is_admin: false,
   });
 }
-function editarFuncionario() {
-  return;
+function editarFuncionario(uuid: string, nome: string, sobrenome: string, email: string, cpf: string, senha: string) {
+  PessoasService.putPessoa(uuid, nome, sobrenome, email, cpf, senha, true, false);
 }
 
 export const ModalFuncionario: React.FC<IModalEditarVeiculoProps> = ({
@@ -109,11 +109,10 @@ export const ModalFuncionario: React.FC<IModalEditarVeiculoProps> = ({
               variant='contained'
               onClick={() => {
                 if (action === 'create') {
-                  // TODO lógica de geração do UUID: banco ou local?
                   adicionarFuncionario(nome, sobrenome, email, cpf);
                 } else {
                   if (!funcionario) return;
-                  editarFuncionario();
+                  editarFuncionario(funcionario.uuid, nome, sobrenome, email, cpf, funcionario.senha);
                 }
                 afterAction();
                 onClose();

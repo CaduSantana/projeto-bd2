@@ -56,12 +56,31 @@ async function getPessoaByUUID(uuid: string) {
   return Promise.reject('Não foi possível obter a pessoa');
 }
 
-async function deletePessoaByUUID(uuid: string) {
+async function putPessoa(
+  uuid_pessoa: string,
+  nome: string,
+  sobrenome: string,
+  email: string,
+  cpf: string,
+  senha: string,
+  is_funcionario: boolean,
+  is_admin: boolean
+) {
   const response = await fetch(`${Environment.URL_BASE}/pessoas`, {
-    method: 'DELETE',
+    method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
+    body: JSON.stringify({
+      uuid_pessoa,
+      nome,
+      sobrenome,
+      email,
+      cpf,
+      senha,
+      is_funcionario,
+      is_admin,
+    }),
   });
   return response.status === 200;
 }
@@ -70,5 +89,5 @@ export default {
   getAllFuncionarios,
   postFuncionario,
   getPessoaByUUID,
-  deletePessoaByUUID,
+  putPessoa,
 };
