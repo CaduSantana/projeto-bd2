@@ -25,7 +25,21 @@ export const LayoutBase: React.FC<ILayoutBaseProps> = ({ title, titleVariant = '
         {title && <Typography variant={titleVariant}>{title}</Typography>}
       </Box>
 
-      <Box display='flex' flexDirection='column' gap={1} marginX={2} overflow='scroll' marginBottom={1}>
+      <Box
+        display='flex'
+        flexDirection='column'
+        gap={1}
+        marginX={2}
+        overflow='scroll'
+        marginBottom={1}
+        sx={{
+          '&::-webkit-scrollbar': {
+            display: 'none',
+          },
+          msOverflowStyle: 'none',
+          scrollbarWidth: 'none',
+        }}
+      >
         {children}
       </Box>
     </Box>
