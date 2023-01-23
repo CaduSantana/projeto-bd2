@@ -65,7 +65,8 @@ export const ModalVeiculo: React.FC<IModalEditarVeiculoProps> = ({
               placeholder='Placa'
               value={placa}
               onChange={(e) => {
-                setPlaca(e.target.value);
+                if (e.target.value.length <= 7)
+                  setPlaca(e.target.value);
               }}
               required
               error={placa.length < 7}
@@ -75,7 +76,8 @@ export const ModalVeiculo: React.FC<IModalEditarVeiculoProps> = ({
               placeholder='Tipo'
               value={tipo}
               onChange={(e) => {
-                setTipo(e.target.value);
+                if (e.target.value.length <= 45)
+                  setTipo(e.target.value);
               }}
               required
               error={tipo.length === 0}

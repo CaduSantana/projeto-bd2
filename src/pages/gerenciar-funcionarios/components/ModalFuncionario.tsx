@@ -76,7 +76,8 @@ export const ModalFuncionario: React.FC<IModalEditarVeiculoProps> = ({
               placeholder='Nome'
               value={nome}
               onChange={(e) => {
-                setNome(e.target.value);
+                if (e.target.value.length <= 45)
+                  setNome(e.target.value);
               }}
               required
               error={nome.length === 0}
@@ -86,7 +87,8 @@ export const ModalFuncionario: React.FC<IModalEditarVeiculoProps> = ({
               placeholder='Sobrenome'
               value={sobrenome}
               onChange={(e) => {
-                setSobrenome(e.target.value);
+                if (e.target.value.length <= 45)
+                  setSobrenome(e.target.value);
               }}
               required
               error={sobrenome.length === 0}
@@ -96,7 +98,8 @@ export const ModalFuncionario: React.FC<IModalEditarVeiculoProps> = ({
               placeholder='CPF'
               value={cpf}
               onChange={(e) => {
-                setCpf(e.target.value);
+                if (e.target.value.length <= 11)
+                  setCpf(e.target.value);
               }}
               required
               error={cpf.length !== 11}
@@ -106,7 +109,8 @@ export const ModalFuncionario: React.FC<IModalEditarVeiculoProps> = ({
               placeholder='Email'
               value={email}
               onChange={(e) => {
-                setEmail(e.target.value);
+                if (e.target.value.length <= 320)
+                  setEmail(e.target.value);
               }}
               required
               error={/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email) === false}
