@@ -1,57 +1,52 @@
-export interface IUF {
-  id: number;
-  nome: string;
-  sigla: string;
-}
+import { Environment } from '../../../enviroment';
+import { IEndereco } from '../../../interfaces';
 
-export interface IMunicipio {
-  id: number;
-  nome: string;
-  uf: IUF;
-}
-
-export interface IEndereco {
-  uuid: string;
+interface EnderecoPost {
   rua: string;
   numero: number;
-  bairro: string;
-  cep: string;
   complemento: string;
-  coordinates?: {
-    lat: number;
-    long: number;
-  };
-  municipio: IMunicipio;
+  bairro: string;
+  cep: number;
+  uuid_pessoa: string;
+  municipiosId_municipio: number;
 }
 
-export function getExemploUF() {
-  return {
-    id: 1,
-    nome: 'São Paulo',
-    sigla: 'SP',
-  } as IUF;
-}
-
-export function getExemploMunicipio() {
-  return {
-    id: 1,
-    nome: 'Presidente Prudente',
-    uf: getExemploUF(),
-  };
-}
-
-export function getExemploEndereco() {
-  return {
-    uuid: '0af616a3-bc39-44fb-97f2-b7e05d696469',
-    rua: 'Rua Roberto Simonsen',
-    numero: 305,
-    bairro: 'Centro Educacional',
-    cep: '19060900',
-    complemento: 'UNESP',
-    municipio: getExemploMunicipio(),
-    coordinates: {
-      lat: -22.122047988151103,
-      long: -51.40894285915336,
+async function getEnderecoByUUID(uuid: string) {
+  const response = await fetch(`${Environment.URL_BASE}/enderecos/${uuid}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
     },
-  } as IEndereco;
+  });
+  // Get only first element of array
+  //const data: IEndereco = await response.json()[0];
+  const data: IEndereco[] = await response.json();
+
+  if (data) {
+    return data[0];
+  }
+
+  return Promise.reject('Não foi possível obter o endereço');
 }
+
+async function postEndereco(endereco: EnderecoPost) {
+  const response = await fetch(`${Environment.URL_BASE}/enderecos`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(endereco),
+  });
+  const generatedUUID: string = await response.json();
+
+  if (generatedUUID) {
+    return generatedUUID;
+  }
+
+  return Promise.reject('Não foi possível criar o endereço');
+}
+
+export default {
+  getEnderecoByUUID,
+  postEndereco,
+};

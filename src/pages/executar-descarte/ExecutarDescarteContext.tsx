@@ -1,5 +1,6 @@
+import { AlertColor } from '@mui/material';
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
-import { IDescarte, IPessoa, IVeiculo } from '../../shared/services/api';
+import { IDescarte, IPessoa, IVeiculo } from '../../shared/interfaces';
 
 interface FuncionarioVeiculo {
   funcionario: IPessoa;
@@ -27,6 +28,34 @@ interface IExecutarDescarteContextData {
     funcionario?: IPessoa;
     setFuncionario: (funcionario: IPessoa) => void;
   };
+  dialogSelecionarOpcaoDestino: {
+    open: boolean;
+    setOpen: (valor: boolean) => void;
+  };
+  modalDestino: {
+    open: boolean;
+    setOpen: (valor: boolean) => void;
+    option: 'manual' | 'mapa';
+    setOption: (option: 'manual' | 'mapa') => void;
+  };
+  snackbar: {
+    aberto: {
+      value: boolean;
+      setValue: (aberto: boolean) => void;
+    };
+    mensagem: {
+      value: string;
+      setValue: (mensagem: string) => void;
+    };
+    tipo: {
+      value: AlertColor | undefined;
+      setValue: (tipo: AlertColor | undefined) => void;
+    };
+  };
+  signal: {
+    value: boolean;
+    toggle: () => void;
+  };
 }
 
 export const ExecutarDescarteContext = createContext<IExecutarDescarteContextData>({} as IExecutarDescarteContextData);
@@ -41,6 +70,13 @@ export const ExecutarDescarteContextProvider: React.FC<{ children: React.ReactNo
   const [modalRealizarDescarte, setModalRealizarDescarte] = useState(false);
   const [modalSelecionarVeiculoAberto, setModalSelecionarVeiculoAberto] = useState(false);
   const [funcionarioSelecionado, setFuncionarioSelecionado] = useState<IPessoa>();
+  const [dialogSelecionarOpcaoDestinoAberto, setDialogSelecionarOpcaoDestinoAberto] = useState(false);
+  const [modalDestinoAberto, setModalDestinoAberto] = useState(false);
+  const [modalDestinoOpcao, setModalDestinoOpcao] = useState<'manual' | 'mapa'>('manual');
+  const [snackbarAberto, setSnackbarAberto] = useState(false);
+  const [snackbarMensagem, setSnackbarMensagem] = useState('');
+  const [snackbarTipo, setSnackbarTipo] = useState<AlertColor>();
+  const [signal, setSignal] = useState(false);
 
   const addFuncionario = useCallback((m_funcionario: IPessoa) => {
     setFuncionariosSelecionados((state) => {
@@ -88,6 +124,34 @@ export const ExecutarDescarteContextProvider: React.FC<{ children: React.ReactNo
         funcionario: funcionarioSelecionado,
         setFuncionario: setFuncionarioSelecionado,
       },
+      dialogSelecionarOpcaoDestino: {
+        open: dialogSelecionarOpcaoDestinoAberto,
+        setOpen: setDialogSelecionarOpcaoDestinoAberto,
+      },
+      modalDestino: {
+        open: modalDestinoAberto,
+        setOpen: setModalDestinoAberto,
+        option: modalDestinoOpcao,
+        setOption: setModalDestinoOpcao,
+      },
+      snackbar: {
+        aberto: {
+          value: snackbarAberto,
+          setValue: setSnackbarAberto,
+        },
+        mensagem: {
+          value: snackbarMensagem,
+          setValue: setSnackbarMensagem,
+        },
+        tipo: {
+          value: snackbarTipo,
+          setValue: setSnackbarTipo,
+        },
+      },
+      signal: {
+        value: signal,
+        toggle: () => setSignal((state) => !state),
+      },
     }),
     [
       descarteSolicitado,
@@ -95,6 +159,16 @@ export const ExecutarDescarteContextProvider: React.FC<{ children: React.ReactNo
       modalRealizarDescarte,
       modalSelecionarVeiculoAberto,
       funcionarioSelecionado,
+      dialogSelecionarOpcaoDestinoAberto,
+      modalDestinoAberto,
+      modalDestinoOpcao,
+      snackbarAberto,
+      snackbarMensagem,
+      snackbarTipo,
+      signal,
+      addFuncionario,
+      removeFuncionario,
+      associateVeiculo,
     ]
   );
 

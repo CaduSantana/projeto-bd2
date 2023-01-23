@@ -1,23 +1,30 @@
 import { Box, Button, Modal, Paper, TextField, useTheme } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { IVeiculo } from '../../../shared/services/api';
+import { IVeiculo } from '../../../shared/interfaces';
+import VeiculosService from '../../../shared/services/api/veiculos/VeiculosService';
 
 interface IModalEditarVeiculoProps {
   open: boolean;
   onClose: () => void;
   action: 'create' | 'edit';
+  afterAction: () => void;
   veiculo?: IVeiculo;
 }
 
-// TODO funções que realizam escrita e edição no Banco de Dados, devem ser transportadas para VeiculosService posteriormente.
-function adicionarVeiculo(veiculo: IVeiculo) {
-  return;
+function adicionarVeiculo(placa: string, tipo: string, capacidade: number) {
+  VeiculosService.postVeiculo({ placa, tipo, capacidade });
 }
-function editarVeiculo(veiculo: IVeiculo) {
-  return;
+function editarVeiculo(uuid_veiculo: string, placa: string, tipo: string, capacidade: number) {
+  VeiculosService.putVeiculo(uuid_veiculo, placa, tipo, capacidade);
 }
 
-export const ModalVeiculo: React.FC<IModalEditarVeiculoProps> = ({ open, onClose, action, veiculo }) => {
+export const ModalVeiculo: React.FC<IModalEditarVeiculoProps> = ({
+  open,
+  onClose,
+  action,
+  afterAction: onAction,
+  veiculo,
+}) => {
   const theme = useTheme();
 
   const [placa, setPlaca] = useState<string>('');
@@ -60,6 +67,8 @@ export const ModalVeiculo: React.FC<IModalEditarVeiculoProps> = ({ open, onClose
               onChange={(e) => {
                 setPlaca(e.target.value);
               }}
+              required
+              error={placa.length < 7}
             />
             <TextField
               size='small'
@@ -68,6 +77,8 @@ export const ModalVeiculo: React.FC<IModalEditarVeiculoProps> = ({ open, onClose
               onChange={(e) => {
                 setTipo(e.target.value);
               }}
+              required
+              error={tipo.length === 0}
             />
             <TextField
               size='small'
@@ -78,19 +89,26 @@ export const ModalVeiculo: React.FC<IModalEditarVeiculoProps> = ({ open, onClose
                   setCapacidade(Number(e.target.value));
                 }
               }}
+              required
+              error={capacidade === 0}
             />
           </Box>
           <Box display='flex' flexDirection='row' gap={2}>
             <Button
               variant='contained'
               onClick={() => {
-                if (action === 'create') {
-                  // TODO lógica de geração do UUID: banco ou local?
-                  const uuid = '';
-                  adicionarVeiculo({ uuid, placa, tipo, capacidade });
-                } else {
-                  if (!veiculo) return;
-                  editarVeiculo({ uuid: veiculo.uuid, placa, tipo, capacidade });
+                const placaValida = placa.length === 7;
+                const tipoValido = tipo.length > 0;
+                const capacidadeValida = capacidade > 0;
+                if (placaValida && tipoValido && capacidadeValida) {
+                  if (action === 'create') {
+                    adicionarVeiculo(placa, tipo, capacidade);
+                  } else {
+                    if (!veiculo) return;
+                    editarVeiculo(veiculo.uuid, placa, tipo, capacidade);
+                  }
+                  onAction();
+                  onClose();
                 }
               }}
             >

@@ -1,22 +1,44 @@
 import { Autocomplete, Box, Button, Icon, Paper, TextField, useTheme } from '@mui/material';
-import { useState } from 'react';
-import { getExemploProduto, IProduto } from '../../../shared/services/api';
+import { useEffect, useMemo, useState } from 'react';
+import { IProduto } from '../../../shared/interfaces';
+import ProdutosService from '../../../shared/services/api/produtos/ProdutosService';
 import { useSolicitarDescarteContext } from '../SolicitarDescarteContext';
 
 export const BarraSelecaoProdutos: React.FC = () => {
-  const listaDeProdutos = [getExemploProduto()];
-
   const theme = useTheme();
-  const { produtosAdicionados, modalNovoProdutoAberto } = useSolicitarDescarteContext();
-  const [textoDaBusca, setTextoDaBusca] = useState('');
-  const opcoesDeBusca = listaDeProdutos.map((produto) => ({
-    key: produto.uuid,
-    label: produto.nome,
-  }));
 
+  // Estados de carregamento de dados
+  const [listaDeProdutos, setListaDeProdutos] = useState<IProduto[]>([]);
+
+  // Estados de componente
+  const [textoDaBusca, setTextoDaBusca] = useState('');
   const [produtoSelecionado, setProdutoSelecionado] = useState<IProduto>();
 
-  const adicionarProdutoSelecionado = () => {
+  // Estados de contexto
+  const {
+    produtosAdicionados,
+    modalNovoProdutoAberto,
+    signal: { value: signal },
+  } = useSolicitarDescarteContext();
+
+  // Carregamento de dados
+  useEffect(() => {
+    ProdutosService.getAllProdutos().then((produtos) => {
+      setListaDeProdutos(produtos);
+    });
+  }, [signal]);
+
+  // Memo de opções de busca
+  const opcoesDeBusca = useMemo(
+    () =>
+      listaDeProdutos.map((produto) => ({
+        key: produto.uuid,
+        label: produto.nome,
+      })),
+    [listaDeProdutos]
+  );
+
+  function adicionarProdutoSelecionado() {
     // Verifica se não existe um produto selecionado
     if (!produtoSelecionado) {
       return;
@@ -24,7 +46,7 @@ export const BarraSelecaoProdutos: React.FC = () => {
 
     // Verifica se o produto atualmente selecionado já está presente na lista
     // de produtos adicionados. Se sim, incrementa a quantidade em uma unidade.
-    const indexProduto = produtosAdicionados.value.findIndex((produto) => produto.uuid === produtoSelecionado.uuid);
+    const indexProduto = produtosAdicionados.value.findIndex(({ produto }) => produto.uuid === produtoSelecionado.uuid);
     if (indexProduto !== -1) {
       const novoProdutosAdicionados = [...produtosAdicionados.value];
       novoProdutosAdicionados[indexProduto].quantidade += 1;
@@ -34,12 +56,12 @@ export const BarraSelecaoProdutos: React.FC = () => {
       produtosAdicionados.setValue([
         ...produtosAdicionados.value,
         {
-          uuid: produtoSelecionado.uuid,
+          produto: produtoSelecionado,
           quantidade: 1,
         },
       ]);
     }
-  };
+  }
 
   return (
     <Box
