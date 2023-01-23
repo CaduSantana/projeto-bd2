@@ -5,8 +5,14 @@ import DescartesService from '../../../shared/services/api/descartes/DescartesSe
 import { useExecutarDescarteContext } from '../ExecutarDescarteContext';
 
 export const ModalSelecionarDestino: React.FC = () => {
-  const { descarteSolicitado, funcionariosSelecionados, modalDestino, modalRealizarDescarte, snackbar } =
-    useExecutarDescarteContext();
+  const {
+    descarteSolicitado,
+    funcionariosSelecionados,
+    modalDestino,
+    modalRealizarDescarte,
+    snackbar,
+    signal: { toggle: toggleSignal },
+  } = useExecutarDescarteContext();
   const [coordinates, setCoordinates] = useState<{ lat: number; lng: number }>({
     lat: -22.12077189709656,
     lng: -51.40811411654623,
@@ -36,6 +42,7 @@ export const ModalSelecionarDestino: React.FC = () => {
         municipioId: municipioId,
       }
     ).then(() => {
+      toggleSignal();
       setTimeout(() => {
         snackbar.aberto.setValue(true);
         snackbar.mensagem.setValue('Descarte realizado com sucesso!');

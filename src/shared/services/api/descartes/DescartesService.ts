@@ -64,7 +64,7 @@ async function getAllFuncionariosVeiculosInDescarte(uuid: string) {
     return await Promise.all(
       data.map(async (produto) => {
         const funcionario = await PessoasService.getPessoaByUUID(produto.uuid_funcionario);
-        const veiculo = await VeiculosService.getVeiculoByUUId(produto.uuid_veiculo);
+        const veiculo = await VeiculosService.getVeiculoByUUID(produto.uuid_veiculo);
         return {
           funcionario: funcionario,
           veiculo: veiculo,

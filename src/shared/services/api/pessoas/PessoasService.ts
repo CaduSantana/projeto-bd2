@@ -56,8 +56,19 @@ async function getPessoaByUUID(uuid: string) {
   return Promise.reject('Não foi possível obter a pessoa');
 }
 
+async function deletePessoaByUUID(uuid: string) {
+  const response = await fetch(`${Environment.URL_BASE}/pessoas`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  return response.status === 200;
+}
+
 export default {
   getAllFuncionarios,
   postFuncionario,
   getPessoaByUUID,
+  deletePessoaByUUID,
 };

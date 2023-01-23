@@ -33,7 +33,7 @@ export const TabelaDescartes = () => {
   const [latLngMapaLeaflet, setLatLngMapaLeaflet] = useState<[number, number]>([0, 0]);
 
   // States de contexto
-  const { modalRealizarDescarte, descarteSolicitado } = useExecutarDescarteContext();
+  const { modalRealizarDescarte, descarteSolicitado, signal: { value: signal } } = useExecutarDescarteContext();
 
   useEffect(() => {
     setLoadingStatus('loading');
@@ -46,7 +46,7 @@ export const TabelaDescartes = () => {
       .catch(() => {
         setLoadingStatus('fail');
       });
-  }, []);
+  }, [signal]);
 
   // Memoize linhas da tabela
   const tableData = useMemo(

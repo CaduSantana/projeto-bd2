@@ -48,17 +48,19 @@ async function postVeiculo(veiculo: VeiculoPost) {
   return response.status === 201;
 }
 
-export function getExemploVeiculo() {
-  return {
-    uuid: 'c3f054e8-34d3-4797-b858-5add245a2c64',
-    placa: 'SAF1234',
-    tipo: 'Caminhão',
-    capacidade: 200,
-  } as IVeiculo;
+async function deleteVeiculoByUUID(uuid: string) {
+  const response = await fetch(`${Environment.URL_BASE}/veiculos/${uuid}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  return response.status === 200;
 }
 
 export default {
   getAllVeiculos,
-  getVeiculoByUUId: getVeiculoByUUID,
+  getVeiculoByUUID,
   postVeiculo,
+  deleteVeiculoByUUID,
 };

@@ -116,8 +116,14 @@ export const GerenciarVeiculos: React.FC = () => {
         }}
         title='Excluir veículo'
         message='Deseja realmente excluir este veículo?'
-        onConfirm={() => {
-          // TODO função que exclui veículo do Banco de Dados.
+        onConfirm={function() {
+          if (!veiculoSelecionado) {
+            return;
+          }
+
+          VeiculosService.deleteVeiculoByUUID(veiculoSelecionado.uuid).then(() => {
+            handleDataChange();
+          });
         }}
       />
       <ModalVeiculo

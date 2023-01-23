@@ -1,17 +1,29 @@
 import { MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ModalWrapper } from '../../../shared/components';
-import { getExemploVeiculo } from '../../../shared/services/api';
+import { IVeiculo } from '../../../shared/interfaces';
+import VeiculosService from '../../../shared/services/api/veiculos/VeiculosService';
 import { useExecutarDescarteContext } from '../ExecutarDescarteContext';
 
 export const ModalSelecionarVeiculo: React.FC = () => {
-  const veiculos = [getExemploVeiculo()];
+  // Estados de carregamento de dados
+  const [veiculos, setVeiculos] = useState<IVeiculo[]>([]);
 
+  // Estados do componente
   const [uuidVeiculoSelecionado, setUuidVeiculoSelecionado] = useState<string>('');
 
+  // Estados de contexto
   const {
-    modalSelecionarVeiculo: { open, setOpen, funcionario }, funcionariosSelecionados: { associateVeiculo },
+    modalSelecionarVeiculo: { open, setOpen, funcionario },
+    funcionariosSelecionados: { associateVeiculo },
   } = useExecutarDescarteContext();
+
+  // Carregamento de dados
+  useEffect(() => {
+    VeiculosService.getAllVeiculos().then((veiculos) => {
+      setVeiculos(veiculos);
+    });
+  }, []);
 
   function handleChangeVeiculoSelecionado(e: SelectChangeEvent<string>) {
     setUuidVeiculoSelecionado(e.target.value);

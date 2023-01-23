@@ -52,6 +52,10 @@ interface IExecutarDescarteContextData {
       setValue: (tipo: AlertColor | undefined) => void;
     };
   };
+  signal: {
+    value: boolean;
+    toggle: () => void;
+  };
 }
 
 export const ExecutarDescarteContext = createContext<IExecutarDescarteContextData>({} as IExecutarDescarteContextData);
@@ -72,6 +76,7 @@ export const ExecutarDescarteContextProvider: React.FC<{ children: React.ReactNo
   const [snackbarAberto, setSnackbarAberto] = useState(false);
   const [snackbarMensagem, setSnackbarMensagem] = useState('');
   const [snackbarTipo, setSnackbarTipo] = useState<AlertColor>();
+  const [signal, setSignal] = useState(false);
 
   const addFuncionario = useCallback((m_funcionario: IPessoa) => {
     setFuncionariosSelecionados((state) => {
@@ -143,6 +148,10 @@ export const ExecutarDescarteContextProvider: React.FC<{ children: React.ReactNo
           setValue: setSnackbarTipo,
         },
       },
+      signal: {
+        value: signal,
+        toggle: () => setSignal((state) => !state),
+      },
     }),
     [
       descarteSolicitado,
@@ -156,6 +165,7 @@ export const ExecutarDescarteContextProvider: React.FC<{ children: React.ReactNo
       snackbarAberto,
       snackbarMensagem,
       snackbarTipo,
+      signal,
       addFuncionario,
       removeFuncionario,
       associateVeiculo,
