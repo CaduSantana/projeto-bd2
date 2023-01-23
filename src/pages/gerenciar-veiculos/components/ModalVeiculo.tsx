@@ -67,6 +67,8 @@ export const ModalVeiculo: React.FC<IModalEditarVeiculoProps> = ({
               onChange={(e) => {
                 setPlaca(e.target.value);
               }}
+              required
+              error={placa.length < 7}
             />
             <TextField
               size='small'
@@ -75,6 +77,8 @@ export const ModalVeiculo: React.FC<IModalEditarVeiculoProps> = ({
               onChange={(e) => {
                 setTipo(e.target.value);
               }}
+              required
+              error={tipo.length === 0}
             />
             <TextField
               size='small'
@@ -85,20 +89,27 @@ export const ModalVeiculo: React.FC<IModalEditarVeiculoProps> = ({
                   setCapacidade(Number(e.target.value));
                 }
               }}
+              required
+              error={capacidade === 0}
             />
           </Box>
           <Box display='flex' flexDirection='row' gap={2}>
             <Button
               variant='contained'
               onClick={() => {
-                if (action === 'create') {
-                  adicionarVeiculo(placa, tipo, capacidade);
-                } else {
-                  if (!veiculo) return;
-                  editarVeiculo(veiculo.uuid, placa, tipo, capacidade);
+                const placaValida = placa.length === 7;
+                const tipoValido = tipo.length > 0;
+                const capacidadeValida = capacidade > 0;
+                if (placaValida && tipoValido && capacidadeValida) {
+                  if (action === 'create') {
+                    adicionarVeiculo(placa, tipo, capacidade);
+                  } else {
+                    if (!veiculo) return;
+                    editarVeiculo(veiculo.uuid, placa, tipo, capacidade);
+                  }
+                  onAction();
+                  onClose();
                 }
-                onAction();
-                onClose();
               }}
             >
               {action === 'create' ? 'Adicionar' : 'Editar'}

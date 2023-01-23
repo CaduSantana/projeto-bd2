@@ -35,8 +35,8 @@ export const ModalEndereco: React.FC<IModalEnderecoProps> = ({ open, onClose, on
   const [ufs, setUfs] = useState<IUF[]>([]);
   const [municipios, setMunicipios] = useState<IMunicipio[]>([]);
   // Estados do formulário
-  const [ufIdSelecionada, setUfIdSelecionada] = useState<number>(1);
-  const [municipioIdSelecionada, setMunicipioIdSelecionada] = useState<number>(1);
+  const [ufIdSelecionada, setUfIdSelecionada] = useState<number | null>(null);
+  const [municipioIdSelecionada, setMunicipioIdSelecionada] = useState<number | null>(null);
   const [rua, setRua] = useState<string>('');
   const [numero, setNumero] = useState<string>('');
   const [bairro, setBairro] = useState<string>('');
@@ -46,10 +46,6 @@ export const ModalEndereco: React.FC<IModalEnderecoProps> = ({ open, onClose, on
   // Carrega todas as UFs
   useEffect(() => {
     UfsService.getAllUfs().then((ufs) => {
-      if (ufs instanceof Error) {
-        return;
-      }
-
       setUfs(ufs);
       setUfIdSelecionada(ufs[0].id_uf);
     });
@@ -57,6 +53,10 @@ export const ModalEndereco: React.FC<IModalEnderecoProps> = ({ open, onClose, on
 
   // Atualiza municipios sempre que a UF selecionada mudar
   useEffect(() => {
+    if (ufIdSelecionada === null) {
+      return;
+    }
+
     MunicipiosService.getAllMunicipiosByUfId(ufIdSelecionada).then((municipios) => {
       if (municipios instanceof Error) {
         return;
@@ -184,15 +184,23 @@ export const ModalEndereco: React.FC<IModalEnderecoProps> = ({ open, onClose, on
               variant='contained'
               fullWidth
               onClick={function () {
-                onClickConfirm(
-                  ufIdSelecionada,
-                  municipioIdSelecionada,
-                  rua,
-                  parseInt(numero),
-                  bairro,
-                  parseInt(cep),
-                  complemento
-                );
+                const ufIdPresente = ufIdSelecionada !== null;
+                const municipioIdPresente = municipioIdSelecionada !== null;
+                const ruaPresente = rua.length > 0;
+                const bairroPresente = bairro.length > 0;
+                const cepValido = cep.length === 0 || cep.length === TAMANHO_MAXIMO_CEP;
+                if (ufIdPresente && municipioIdPresente && ruaPresente && bairroPresente && cepValido) {
+                  onClickConfirm(
+                    ufIdSelecionada,
+                    municipioIdSelecionada,
+                    rua,
+                    parseInt(numero),
+                    bairro,
+                    parseInt(cep),
+                    complemento
+                  );
+                  onClose();
+                }
               }}
             >
               Solicitar Descarte

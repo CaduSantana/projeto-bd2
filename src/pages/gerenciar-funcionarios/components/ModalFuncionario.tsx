@@ -78,6 +78,8 @@ export const ModalFuncionario: React.FC<IModalEditarVeiculoProps> = ({
               onChange={(e) => {
                 setNome(e.target.value);
               }}
+              required
+              error={nome.length === 0}
             />
             <TextField
               size='small'
@@ -86,6 +88,8 @@ export const ModalFuncionario: React.FC<IModalEditarVeiculoProps> = ({
               onChange={(e) => {
                 setSobrenome(e.target.value);
               }}
+              required
+              error={sobrenome.length === 0}
             />
             <TextField
               size='small'
@@ -94,6 +98,8 @@ export const ModalFuncionario: React.FC<IModalEditarVeiculoProps> = ({
               onChange={(e) => {
                 setCpf(e.target.value);
               }}
+              required
+              error={cpf.length !== 11}
             />
             <TextField
               size='small'
@@ -102,20 +108,28 @@ export const ModalFuncionario: React.FC<IModalEditarVeiculoProps> = ({
               onChange={(e) => {
                 setEmail(e.target.value);
               }}
+              required
+              error={/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email) === false}
             />
           </Box>
           <Box display='flex' flexDirection='row' gap={2}>
             <Button
               variant='contained'
               onClick={() => {
-                if (action === 'create') {
-                  adicionarFuncionario(nome, sobrenome, email, cpf);
-                } else {
-                  if (!funcionario) return;
-                  editarFuncionario(funcionario.uuid, nome, sobrenome, email, cpf, funcionario.senha);
+                const nomeValido = nome.length > 0;
+                const sobrenomeValido = sobrenome.length > 0;
+                const cpfValido = cpf.length === 11;
+                const emailValido = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email);
+                if (nomeValido && sobrenomeValido && cpfValido && emailValido) {
+                  if (action === 'create') {
+                    adicionarFuncionario(nome, sobrenome, email, cpf);
+                  } else {
+                    if (!funcionario) return;
+                    editarFuncionario(funcionario.uuid, nome, sobrenome, email, cpf, funcionario.senha);
+                  }
+                  afterAction();
+                  onClose();
                 }
-                afterAction();
-                onClose();
               }}
             >
               {action === 'create' ? 'Adicionar' : 'Editar'}
