@@ -18,10 +18,12 @@ async function getEnderecoByUUID(uuid: string) {
       'Content-Type': 'application/json',
     },
   });
-  const data: IEndereco = await response.json();
+  // Get only first element of array
+  //const data: IEndereco = await response.json()[0];
+  const data: IEndereco[] = await response.json();
 
   if (data) {
-    return data;
+    return data[0];
   }
 
   return Promise.reject('Não foi possível obter o endereço');
