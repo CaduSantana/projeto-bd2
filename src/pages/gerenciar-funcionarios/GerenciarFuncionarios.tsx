@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { AlertaFalha, ModalConfirmacao, Tabela } from '../../shared/components';
+import { AlertaFalha, Tabela } from '../../shared/components';
 import { LayoutBase } from '../../shared/layouts';
 import { IPessoa } from '../../shared/interfaces';
 import { BarraDePesquisa, ModalFuncionario } from './components';
@@ -44,14 +44,8 @@ export const GerenciarFuncionarios: React.FC = () => {
     setModalFuncionarioAberto(true);
   }
 
-  function abrirModalExclusao(funcionario: IPessoa) {
-    setFuncionarioSelecionado(funcionario);
-    setModalConfirmacaoExclusaoAberto(true);
-  }
-
   const [modalFuncionarioAberto, setModalFuncionarioAberto] = useState<boolean>(false);
   const [modalAction, setModalAction] = useState<'create' | 'edit'>('create');
-  const [modalConfirmacaoExclusaoAberto, setModalConfirmacaoExclusaoAberto] = useState<boolean>(false);
   const [funcionarioSelecionado, setFuncionarioSelecionado] = useState<IPessoa>();
 
   const tableData = useMemo(
@@ -104,12 +98,6 @@ export const GerenciarFuncionarios: React.FC = () => {
                   abrirModalEdicao(funcionario as IPessoa);
                 },
               },
-              {
-                icon: 'delete',
-                onClick: function (funcionario) {
-                  abrirModalExclusao(funcionario as IPessoa);
-                },
-              },
             ]}
           />
         </>
@@ -117,17 +105,6 @@ export const GerenciarFuncionarios: React.FC = () => {
       {loadingStatus === 'fail' && <AlertaFalha />}
       {loadingStatus === 'loading' && <CircularProgress />}
 
-      <ModalConfirmacao
-        open={modalConfirmacaoExclusaoAberto}
-        onClose={() => {
-          setModalConfirmacaoExclusaoAberto(false);
-        }}
-        title='Remover funcionário'
-        message='Deseja realmente remover este funcionário?'
-        onConfirm={() => {
-          // TODO função que exclui veículo do Banco de Dados.
-        }}
-      />
       <ModalFuncionario
         open={modalFuncionarioAberto}
         action={modalAction}

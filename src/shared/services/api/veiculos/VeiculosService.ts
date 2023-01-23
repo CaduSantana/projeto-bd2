@@ -48,12 +48,13 @@ async function postVeiculo(veiculo: VeiculoPost) {
   return response.status === 201;
 }
 
-async function deleteVeiculoByUUID(uuid: string) {
-  const response = await fetch(`${Environment.URL_BASE}/veiculos/${uuid}`, {
-    method: 'DELETE',
+async function putVeiculo(uuid_veiculo: string, placa: string, tipo: string, capacidade: number) {
+  const response = await fetch(`${Environment.URL_BASE}/veiculos`, {
+    method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
+    body: JSON.stringify({ uuid_veiculo, placa, tipo, capacidade }),
   });
   return response.status === 200;
 }
@@ -62,5 +63,5 @@ export default {
   getAllVeiculos,
   getVeiculoByUUID,
   postVeiculo,
-  deleteVeiculoByUUID,
+  putVeiculo,
 };

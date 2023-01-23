@@ -11,12 +11,11 @@ interface IModalEditarVeiculoProps {
   veiculo?: IVeiculo;
 }
 
-// TODO funções que realizam escrita e edição no Banco de Dados, devem ser transportadas para VeiculosService posteriormente.
 function adicionarVeiculo(placa: string, tipo: string, capacidade: number) {
   VeiculosService.postVeiculo({ placa, tipo, capacidade });
 }
-function editarVeiculo() {
-  return;
+function editarVeiculo(uuid_veiculo: string, placa: string, tipo: string, capacidade: number) {
+  VeiculosService.putVeiculo(uuid_veiculo, placa, tipo, capacidade);
 }
 
 export const ModalVeiculo: React.FC<IModalEditarVeiculoProps> = ({
@@ -96,7 +95,7 @@ export const ModalVeiculo: React.FC<IModalEditarVeiculoProps> = ({
                   adicionarVeiculo(placa, tipo, capacidade);
                 } else {
                   if (!veiculo) return;
-                  editarVeiculo();
+                  editarVeiculo(veiculo.uuid, placa, tipo, capacidade);
                 }
                 onAction();
                 onClose();

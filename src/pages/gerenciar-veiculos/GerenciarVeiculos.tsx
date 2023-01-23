@@ -1,4 +1,4 @@
-import { AlertaFalha, ModalConfirmacao, Tabela } from '../../shared/components';
+import { AlertaFalha, Tabela } from '../../shared/components';
 import { LayoutBase } from '../../shared/layouts';
 import { BarraDePesquisa, ModalVeiculo } from './components';
 import { IVeiculo } from '../../shared/interfaces';
@@ -44,12 +44,6 @@ export const GerenciarVeiculos: React.FC = () => {
     setModalVeiculoAberto(true);
   }
 
-  function abrirModalExclusao(veiculo: IVeiculo) {
-    setVeiculoSelecionado(veiculo);
-    setModalConfirmacaoExclusaoAberto(true);
-  }
-
-  const [modalConfirmacaoExclusaoAberto, setModalConfirmacaoExclusaoAberto] = useState<boolean>(false);
   const [modalVeiculoAberto, setModalVeiculoAberto] = useState<boolean>(false);
   const [modalAction, setModalAction] = useState<'create' | 'edit'>('create');
   const [veiculoSelecionado, setVeiculoSelecionado] = useState<IVeiculo>();
@@ -96,12 +90,6 @@ export const GerenciarVeiculos: React.FC = () => {
                   abrirModalEdicao(veiculo as IVeiculo);
                 },
               },
-              {
-                icon: 'delete',
-                onClick: function (veiculo) {
-                  abrirModalExclusao(veiculo as IVeiculo);
-                },
-              },
             ]}
           />
         </>
@@ -109,23 +97,6 @@ export const GerenciarVeiculos: React.FC = () => {
       {loadingStatus === 'fail' && <AlertaFalha />}
       {loadingStatus === 'loading' && <CircularProgress />}
 
-      <ModalConfirmacao
-        open={modalConfirmacaoExclusaoAberto}
-        onClose={() => {
-          setModalConfirmacaoExclusaoAberto(false);
-        }}
-        title='Excluir veículo'
-        message='Deseja realmente excluir este veículo?'
-        onConfirm={function() {
-          if (!veiculoSelecionado) {
-            return;
-          }
-
-          VeiculosService.deleteVeiculoByUUID(veiculoSelecionado.uuid).then(() => {
-            handleDataChange();
-          });
-        }}
-      />
       <ModalVeiculo
         open={modalVeiculoAberto}
         veiculo={veiculoSelecionado}
