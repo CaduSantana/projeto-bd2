@@ -30,7 +30,13 @@ export const ModalRealizarDescarte: React.FC = () => {
 
       <ListaFuncionariosSelecionados />
 
-      <Button variant='contained' disabled={!possivelRealizarDescarte}>
+      <Button
+        variant='contained'
+        disabled={!possivelRealizarDescarte}
+        onClick={function () {
+          setDialogEscolhaDestinoAberto(true);
+        }}
+      >
         Realizar descarte
       </Button>
 

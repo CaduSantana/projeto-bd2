@@ -1,5 +1,5 @@
 import { Environment } from '../../../enviroment';
-import { IDescarte, IProduto } from '../../../interfaces';
+import { IDescarte, IPessoa, IProduto, IVeiculo } from '../../../interfaces';
 import EnderecosService from '../enderecos/EnderecosService';
 import PessoasService from '../pessoas/PessoasService';
 import ProdutosService from '../produtos/ProdutosService';
@@ -160,7 +160,82 @@ async function solicitarDescarte(descarte: {
   return Promise.resolve(true);
 }
 
+async function executarDescarte(
+  uuid_descarte: string,
+  funcionariosVeiculos: {
+    funcionario: IPessoa;
+    veiculoUtilizado: IVeiculo;
+  }[],
+  destino: {
+    rua: string;
+    numero: number;
+    complemento: string;
+    bairro: string;
+    cep: string;
+    municipioId: number;
+  }
+) {
+  // Faz o post do endereço.
+  const destinoUUID = await EnderecosService.postEndereco({
+    rua: destino.rua,
+    numero: destino.numero,
+    complemento: destino.complemento,
+    bairro: destino.bairro,
+    cep: parseInt(destino.cep),
+    uuid_pessoa: Environment.UUID_SOLICITANTE,
+    municipiosId_municipio: destino.municipioId,
+  });
+
+  // Faz o PUT do endereço de destino para o descarte
+  await fetch(`${Environment.URL_BASE}/descartes`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      uuid_descarte: uuid_descarte,
+      uuid_destino: destinoUUID,
+    }),
+  });
+
+  // Faz o post dos veículos utilizados
+  await Promise.all(
+    funcionariosVeiculos.map(async ({ veiculoUtilizado }) => {
+      await fetch(`${Environment.URL_BASE}/descartes/veiculos`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          uuid_descarte: uuid_descarte,
+          uuid_veiculo: veiculoUtilizado.uuid,
+        }),
+      });
+    })
+  );
+
+  // Faz o post dos funcionários e veículos utilizados por cada um deles
+  await Promise.all(
+    funcionariosVeiculos.map(async ({ funcionario, veiculoUtilizado }) => {
+      await fetch(`${Environment.URL_BASE}/descartes/funcionario`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          uuid_descarte: uuid_descarte,
+          uuid_funcionario: funcionario.uuid,
+          uuid_veiculo: veiculoUtilizado.uuid,
+        }),
+      });
+    })
+  );
+
+  return Promise.resolve(true);
+}
+
 export default {
   getAllDescartes,
   solicitarDescarte,
+  executarDescarte,
 };

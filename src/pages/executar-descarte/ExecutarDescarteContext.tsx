@@ -1,5 +1,5 @@
+import { AlertColor } from '@mui/material';
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
-import { ModalEnderecoOut } from '../../shared/components';
 import { IDescarte, IPessoa, IVeiculo } from '../../shared/interfaces';
 
 interface FuncionarioVeiculo {
@@ -37,13 +37,20 @@ interface IExecutarDescarteContextData {
     setOpen: (valor: boolean) => void;
     option: 'manual' | 'mapa';
     setOption: (option: 'manual' | 'mapa') => void;
-    coordinates?: {
-      lat: number;
-      lng: number;
+  };
+  snackbar: {
+    aberto: {
+      value: boolean;
+      setValue: (aberto: boolean) => void;
     };
-    setCoordinates: (coordinates: { lat: number; lng: number }) => void;
-    endereco?: ModalEnderecoOut;
-    setEndereco: (endereco: ModalEnderecoOut) => void;
+    mensagem: {
+      value: string;
+      setValue: (mensagem: string) => void;
+    };
+    tipo: {
+      value: AlertColor | undefined;
+      setValue: (tipo: AlertColor | undefined) => void;
+    };
   };
 }
 
@@ -62,8 +69,9 @@ export const ExecutarDescarteContextProvider: React.FC<{ children: React.ReactNo
   const [dialogSelecionarOpcaoDestinoAberto, setDialogSelecionarOpcaoDestinoAberto] = useState(false);
   const [modalDestinoAberto, setModalDestinoAberto] = useState(false);
   const [modalDestinoOpcao, setModalDestinoOpcao] = useState<'manual' | 'mapa'>('manual');
-  const [coordinates, setCoordinates] = useState<{ lat: number; lng: number }>();
-  const [endereco, setEndereco] = useState<ModalEnderecoOut>();
+  const [snackbarAberto, setSnackbarAberto] = useState(false);
+  const [snackbarMensagem, setSnackbarMensagem] = useState('');
+  const [snackbarTipo, setSnackbarTipo] = useState<AlertColor>();
 
   const addFuncionario = useCallback((m_funcionario: IPessoa) => {
     setFuncionariosSelecionados((state) => {
@@ -120,10 +128,20 @@ export const ExecutarDescarteContextProvider: React.FC<{ children: React.ReactNo
         setOpen: setModalDestinoAberto,
         option: modalDestinoOpcao,
         setOption: setModalDestinoOpcao,
-        coordinates,
-        setCoordinates,
-        endereco,
-        setEndereco,
+      },
+      snackbar: {
+        aberto: {
+          value: snackbarAberto,
+          setValue: setSnackbarAberto,
+        },
+        mensagem: {
+          value: snackbarMensagem,
+          setValue: setSnackbarMensagem,
+        },
+        tipo: {
+          value: snackbarTipo,
+          setValue: setSnackbarTipo,
+        },
       },
     }),
     [
@@ -135,8 +153,12 @@ export const ExecutarDescarteContextProvider: React.FC<{ children: React.ReactNo
       dialogSelecionarOpcaoDestinoAberto,
       modalDestinoAberto,
       modalDestinoOpcao,
-      coordinates,
-      endereco,
+      snackbarAberto,
+      snackbarMensagem,
+      snackbarTipo,
+      addFuncionario,
+      removeFuncionario,
+      associateVeiculo,
     ]
   );
 
