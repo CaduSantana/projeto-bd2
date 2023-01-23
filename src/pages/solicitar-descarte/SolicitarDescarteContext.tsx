@@ -37,6 +37,10 @@ interface ISolicitarDescarteContextData {
       setValue: (tipo: AlertColor | undefined) => void;
     };
   };
+  signal: {
+    value: boolean;
+    toggle: () => void;
+  };
 }
 
 export const SolicitarDescarteContext = createContext<ISolicitarDescarteContextData>(
@@ -68,6 +72,7 @@ export const SolicitarDescarteContextProvider: React.FC<{ children: React.ReactN
   const [snackbarAberto, setSnackbarAberto] = useState(false);
   const [mensagemSnackbar, setMensagemSnackbar] = useState('');
   const [tipoAlertaSnackbar, setTipoAlertaSnackbar] = useState<AlertColor | undefined>(undefined);
+  const [signal, setSignal] = useState(false);
 
   const setSaveProdutosAdicionados = useCallback(
     (
@@ -110,6 +115,12 @@ export const SolicitarDescarteContextProvider: React.FC<{ children: React.ReactN
           setValue: setTipoAlertaSnackbar,
         },
       },
+      signal: {
+        value: signal,
+        toggle: function() {
+          setSignal(!signal);
+        },
+      }
     }),
     [
       produtosAdicionados,
@@ -118,6 +129,7 @@ export const SolicitarDescarteContextProvider: React.FC<{ children: React.ReactN
       snackbarAberto,
       mensagemSnackbar,
       tipoAlertaSnackbar,
+      signal,
       setSaveProdutosAdicionados,
       setModalNovoProdutoAberto,
       setModalEnderecoAberto,

@@ -10,7 +10,7 @@ export interface IMapaInterativoLeafletProps {
   lngInicial: number;
   width: number;
   height: number;
-  getPosition: () => { lat: number; lng: number };
+  onMarkerMove: (position: { lat: number; lng: number }) => void;
 }
 
 export const MapaInterativoLeaflet: React.FC<IMapaInterativoLeafletProps> = ({ latInicial, lngInicial, width, height }) => {

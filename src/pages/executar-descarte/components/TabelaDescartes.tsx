@@ -1,5 +1,4 @@
 import { MapaLeaflet, IMapaLeafletProps, ModalWrapper, Tabela } from '../../../shared/components';
-import { getExemploDescarte } from '../../../shared/services/api';
 import { IDescarte } from '../../../shared/interfaces';
 import { useExecutarDescarteContext } from '../ExecutarDescarteContext';
 import { useMemo, useState } from 'react';
@@ -23,11 +22,15 @@ const ModalMapaLeaftlet: React.FC<ModalMapaLeaftletProps> = ({ open, setOpen, ..
 };
 
 export const TabelaDescartes = () => {
-  const descartes = [getExemploDescarte()];
-  const { modalRealizarDescarte, descarteSolicitado } = useExecutarDescarteContext();
+  // States de carregamento de dados
+  const [descartes, setDescartes] = useState<IDescarte[]>([]);
+  const [loadingStatus, setLoadingStatus] = useState<'loading' | 'success' | 'fail'>('loading');
+  // States do componente
   const [modalMapaLeafletAberto, setModalMapaLeafletAberto] = useState(false);
   const [latLngMapaLeaflet, setLatLngMapaLeaflet] = useState<[number, number]>([0, 0]);
+  // States de contexto
 
+  const { modalRealizarDescarte, descarteSolicitado } = useExecutarDescarteContext();
   const tableData = useMemo(
     () =>
       descartes.map((descarte) => ({

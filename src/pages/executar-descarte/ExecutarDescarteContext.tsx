@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import { ModalEnderecoOut } from '../../shared/components';
 import { IDescarte, IPessoa, IVeiculo } from '../../shared/interfaces';
 
 interface FuncionarioVeiculo {
@@ -27,6 +28,23 @@ interface IExecutarDescarteContextData {
     funcionario?: IPessoa;
     setFuncionario: (funcionario: IPessoa) => void;
   };
+  dialogSelecionarOpcaoDestino: {
+    open: boolean;
+    setOpen: (valor: boolean) => void;
+  };
+  modalDestino: {
+    open: boolean;
+    setOpen: (valor: boolean) => void;
+    option: 'manual' | 'mapa';
+    setOption: (option: 'manual' | 'mapa') => void;
+    coordinates?: {
+      lat: number;
+      lng: number;
+    };
+    setCoordinates: (coordinates: { lat: number; lng: number }) => void;
+    endereco?: ModalEnderecoOut;
+    setEndereco: (endereco: ModalEnderecoOut) => void;
+  };
 }
 
 export const ExecutarDescarteContext = createContext<IExecutarDescarteContextData>({} as IExecutarDescarteContextData);
@@ -41,6 +59,11 @@ export const ExecutarDescarteContextProvider: React.FC<{ children: React.ReactNo
   const [modalRealizarDescarte, setModalRealizarDescarte] = useState(false);
   const [modalSelecionarVeiculoAberto, setModalSelecionarVeiculoAberto] = useState(false);
   const [funcionarioSelecionado, setFuncionarioSelecionado] = useState<IPessoa>();
+  const [dialogSelecionarOpcaoDestinoAberto, setDialogSelecionarOpcaoDestinoAberto] = useState(false);
+  const [modalDestinoAberto, setModalDestinoAberto] = useState(false);
+  const [modalDestinoOpcao, setModalDestinoOpcao] = useState<'manual' | 'mapa'>('manual');
+  const [coordinates, setCoordinates] = useState<{ lat: number; lng: number }>();
+  const [endereco, setEndereco] = useState<ModalEnderecoOut>();
 
   const addFuncionario = useCallback((m_funcionario: IPessoa) => {
     setFuncionariosSelecionados((state) => {
@@ -88,6 +111,20 @@ export const ExecutarDescarteContextProvider: React.FC<{ children: React.ReactNo
         funcionario: funcionarioSelecionado,
         setFuncionario: setFuncionarioSelecionado,
       },
+      dialogSelecionarOpcaoDestino: {
+        open: dialogSelecionarOpcaoDestinoAberto,
+        setOpen: setDialogSelecionarOpcaoDestinoAberto,
+      },
+      modalDestino: {
+        open: modalDestinoAberto,
+        setOpen: setModalDestinoAberto,
+        option: modalDestinoOpcao,
+        setOption: setModalDestinoOpcao,
+        coordinates,
+        setCoordinates,
+        endereco,
+        setEndereco,
+      },
     }),
     [
       descarteSolicitado,
@@ -95,6 +132,11 @@ export const ExecutarDescarteContextProvider: React.FC<{ children: React.ReactNo
       modalRealizarDescarte,
       modalSelecionarVeiculoAberto,
       funcionarioSelecionado,
+      dialogSelecionarOpcaoDestinoAberto,
+      modalDestinoAberto,
+      modalDestinoOpcao,
+      coordinates,
+      endereco,
     ]
   );
 

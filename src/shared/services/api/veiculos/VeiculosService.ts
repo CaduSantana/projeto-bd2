@@ -22,6 +22,21 @@ async function getAllVeiculos() {
   return Promise.reject('Não foi possível obter os veículos');
 }
 
+async function getVeiculoByUUID(uuid: string) {
+  const response = await fetch(`${Environment.URL_BASE}/veiculos/${uuid}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  const veiculo: IVeiculo = await response.json();
+  if (veiculo) {
+    return veiculo;
+  }
+
+  return Promise.reject('Não foi possível obter o veículo');
+}
+
 async function postVeiculo(veiculo: VeiculoPost) {
   const response = await fetch(`${Environment.URL_BASE}/veiculos`, {
     method: 'POST',
@@ -44,5 +59,6 @@ export function getExemploVeiculo() {
 
 export default {
   getAllVeiculos,
+  getVeiculoByUUId: getVeiculoByUUID,
   postVeiculo,
 };

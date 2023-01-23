@@ -3,7 +3,7 @@ export interface IDescarte {
   solicitadoEm: Date;
   solicitante: IPessoa;
   origem: IEndereco;
-  destino: IEndereco;
+  destino?: IEndereco;
   produtosDescartados: {
     produto: IProduto;
     quantidade: number;

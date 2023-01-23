@@ -9,13 +9,23 @@ interface IModalEnderecoProps {
   onClose: () => void;
   onClickConfirm: (
     ufId: number,
-    muicipioId: number,
+    municipioId: number,
     rua: string,
     numero: number,
     bairro: string,
     cep: number,
     complemento: string
   ) => void;
+}
+
+export interface ModalEnderecoOut {
+  ufId: number;
+  municipioId: number;
+  rua: string;
+  numero: number;
+  bairro: string;
+  cep: number;
+  complemento: string;
 }
 
 export const ModalEndereco: React.FC<IModalEnderecoProps> = ({ open, onClose, onClickConfirm }) => {
